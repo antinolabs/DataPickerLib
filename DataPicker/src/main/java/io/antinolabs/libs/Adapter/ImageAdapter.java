@@ -2,7 +2,9 @@ package io.antinolabs.libs.Adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import io.antinolabs.libs.Utils.ImageUtils;
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
   private Context ctx;
   private ArrayList<String> paths;
+  Bitmap bitmap;
 
   public ImageAdapter(Context ctx, ArrayList<String> paths) {
     this.ctx = ctx;
@@ -38,9 +41,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
   @Override
   public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
     //Bitmap bmp = ImageUtils.getBitmapFromPath(paths.get(position));
+
     Uri bmp = Uri.fromFile(new File(paths.get(position)));
     if(bmp != null){
-      Glide.with(ctx).load(bmp).into(holder.imgItem);
+      try {
+        bitmap = MediaStore.Images.Media.getBitmap(ctx.getContentResolver() , bmp);
+      }
+      catch (Exception e ){}
+
+      Glide.with(ctx).load(bitmap).placeholder(android.R.drawable.stat_notify_error).into(holder.imgItem);
     }
   }
 
@@ -53,7 +62,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     ImageView imgItem;
     public MyViewHolder(@NonNull View itemView) {
       super(itemView);
-
       imgItem = itemView.findViewById(R.id.img_item);
     }
   }
