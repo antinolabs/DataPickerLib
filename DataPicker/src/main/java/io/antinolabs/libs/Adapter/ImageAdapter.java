@@ -60,16 +60,21 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
   }
 
   public class MyViewHolder extends RecyclerView.ViewHolder {
-    ImageView imgItem;
+    ImageView imgItem, selectedItem;
     int pos = 0;
     public MyViewHolder(@NonNull final View itemView) {
       super(itemView);
       imgItem = itemView.findViewById(R.id.img_item);
+      selectedItem = itemView.findViewById(R.id.selected_iv);
       imgItem.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
           pos = (int) imgItem.getTag();
-          selectedUrisInterface.selectedImages(paths.get(pos));
+          if (selectedItem.getVisibility()==View.GONE){
+            selectedUrisInterface.selectedImages(paths.get(pos));
+          selectedItem.setVisibility(View.VISIBLE);}
+          else{selectedUrisInterface.removeImages(paths.get(pos));
+            selectedItem.setVisibility(View.GONE);}
         }
       });
     }
