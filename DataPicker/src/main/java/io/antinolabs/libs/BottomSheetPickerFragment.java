@@ -1,6 +1,7 @@
 package io.antinolabs.libs;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -39,17 +41,22 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.antinolabs.libs.Adapter.BottomViewPagerAdapter;
+import io.antinolabs.libs.Adapter.HoriImageAdapter;
 import io.antinolabs.libs.Adapter.ImageAdapter;
-import io.antinolabs.libs.Adapter.ViewPagerAdapter;
 import io.antinolabs.libs.Fragments.ImageFragment;
+import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.Utils.ImageUtils;
 
-public class BottomSheetPickerFragment extends BottomSheetDialogFragment {
+public class BottomSheetPickerFragment extends BottomSheetDialogFragment implements View.OnClickListener, SelectedUrisInterface {
 
   public BaseBuilder builder;
-  private RecyclerView recyclerView;
+  private RecyclerView horiRecyclerView;
   FragmentPagerAdapter fragmentPagerAdapter;
+  TextView emptyTv;
+  HoriImageAdapter horiImageAdapter;
   ViewPager bottomViewPager;
+  ArrayList<String> selectedImages = new ArrayList<>();
   private Button doneBtn;
   private static final int PICK_FROM_GALLERY = 1;
   private RecyclerView.LayoutManager layoutManager;
@@ -77,6 +84,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment {
     return ImageUtils.getAllImagesPath(activity);
   }
 
+  @SuppressLint("RestrictedApi")
   @Override
   public void setupDialog(@NonNull final Dialog dialog, int style) {
     super.setupDialog(dialog, style);
@@ -89,7 +97,6 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment {
       ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
       ((BottomSheetBehavior) behavior).setPeekHeight(600);
     }
-    //initViews(contentView);
   }
 
   @Nullable
@@ -100,16 +107,31 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment {
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    emptyTv = view.findViewById(R.id.selected_photos_empty);
+    horiRecyclerView = view.findViewById(R.id.horizontal_recycler);
+    horiRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
+    horiImageAdapter = new HoriImageAdapter(getActivity(),selectedImages);
+    horiRecyclerView.setAdapter(horiImageAdapter);
     doneBtn = view.findViewById(R.id.btn_done);
-    fragmentPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
-    bottomViewPager = view.findViewById(R.id.pager);
+    doneBtn.setOnClickListener(this);
+    fragmentPagerAdapter = new BottomViewPagerAdapter(getChildFragmentManager(), this);
+    bottomViewPager = view.findViewById(R.id.bottom_view_pager);
     bottomViewPager.setAdapter(fragmentPagerAdapter);
-    doneBtn.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        dismiss();
-      }
-    });
+  }
+
+  @Override
+  public void onClick(View v) {
+    if (v.getId() == R.id.btn_done) {
+      dismiss();
+    }
+  }
+
+  @Override
+  public void selectedImages(String uri) {
+    selectedImages.add(uri);
+    emptyTv.setVisibility(View.GONE);
+    horiRecyclerView.invalidate();
+    horiImageAdapter.notifyDataSetChanged();
   }
 
   public interface OnMultiImageSelectedListener {
@@ -125,6 +147,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment {
     FragmentActivity fragmentActivity;
     int selectMaxCount;
     OnImageSelectedListener onImageSelectedListener;
+    OnMultiImageSelectedListener onMultiImageSelectedListener;
 
     BaseBuilder(@NonNull FragmentActivity fragmentActivity) {
       this.fragmentActivity = fragmentActivity;
@@ -142,7 +165,12 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment {
 
 
     public BottomSheetPickerFragment create() {
+
       try {
+        if (onImageSelectedListener == null && onMultiImageSelectedListener == null) {
+        throw new RuntimeException
+                ("You have to use setOnImageSelectedListener() or setOnMultiImageSelectedListener() for receive selected Uri");
+      }
         if (ActivityCompat.checkSelfPermission(fragmentActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
           ActivityCompat.requestPermissions(fragmentActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PICK_FROM_GALLERY);
         }

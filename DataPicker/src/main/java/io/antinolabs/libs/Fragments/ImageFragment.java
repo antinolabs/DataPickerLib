@@ -16,29 +16,28 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import io.antinolabs.libs.Adapter.ImageAdapter;
+import io.antinolabs.libs.BottomSheetPickerFragment;
+import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.R;
 import io.antinolabs.libs.Utils.ImageUtils;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ImageFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ImageFragment extends Fragment {
+public class ImageFragment extends Fragment implements SelectedUrisInterface {
     private static final int ARG_PARAM1 = 0;
     public static final String ARG_OBJECT = "object";
     private static final String ARG_PARAM2 = "param2";
     private int mParam1;
     private String mParam2;
+    ImageAdapter imageAdapter;
     RecyclerView recyclerView;
+    SelectedUrisInterface selectedUrisInterface;
 
-    public ImageFragment() {
+    public ImageFragment(SelectedUrisInterface selectedUrisInterface) {
+        this.selectedUrisInterface = selectedUrisInterface;
     }
 
-    public static ImageFragment newInstance(int param1, String param2) {
-        ImageFragment fragment = new ImageFragment();
+    public static ImageFragment newInstance(SelectedUrisInterface selectedUrisInterface, String param2) {
+        ImageFragment fragment = new ImageFragment(selectedUrisInterface);
         Bundle args = new Bundle();
-       // args.putInt(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
@@ -48,7 +47,6 @@ public class ImageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            //mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -62,15 +60,18 @@ public class ImageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         recyclerView = view.findViewById(R.id.rc_gallery);
-    RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this.getContext(), 3);
-    recyclerView.setLayoutManager(layoutManager);
+    recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
 
-    ArrayList<String> imagePaths = ImageUtils.getAllImagesPath(this.getActivity());
-    if(imagePaths.size() > 0){
-      ImageAdapter imageAdapter = new ImageAdapter(this.getContext(), imagePaths);
-      recyclerView.setAdapter(imageAdapter);
-      recyclerView.invalidate();
-      imageAdapter.notifyDataSetChanged();
+    if (mParam2.equals("Images")) {
+        ArrayList<String> imagePaths = ImageUtils.getAllImagesPath(this.getActivity());
+        if (imagePaths.size() > 0) {
+            this.imageAdapter = new ImageAdapter(this.getContext(), imagePaths, selectedUrisInterface);
+            recyclerView.setAdapter(imageAdapter);
+        }
     }
+    }
+
+    @Override
+    public void selectedImages(String uri) {
     }
 }
