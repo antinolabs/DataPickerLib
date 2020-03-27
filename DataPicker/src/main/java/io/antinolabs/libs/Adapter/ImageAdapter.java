@@ -2,7 +2,9 @@ package io.antinolabs.libs.Adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +18,21 @@ import com.bumptech.glide.Glide;
 import java.io.File;
 import java.util.ArrayList;
 
+import io.antinolabs.libs.BottomSheetPickerFragment;
+import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.R;
 import io.antinolabs.libs.Utils.ImageUtils;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
   private Context ctx;
   private ArrayList<String> paths;
+  SelectedUrisInterface selectedUrisInterface;
 
-  public ImageAdapter(Context ctx, ArrayList<String> paths) {
+
+  public ImageAdapter(Context ctx, ArrayList<String> paths, SelectedUrisInterface selectedUrisInterface) {
     this.ctx = ctx;
     this.paths = paths;
+    this.selectedUrisInterface = selectedUrisInterface;
   }
 
   @NonNull
@@ -38,10 +45,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
   @Override
   public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
     //Bitmap bmp = ImageUtils.getBitmapFromPath(paths.get(position));
-    Uri bmp = Uri.fromFile(new File(paths.get(position)));
-    if(bmp != null){
-      Glide.with(ctx).load(bmp).into(holder.imgItem);
-    }
+    holder.imgItem.setTag(position);
+    /*Uri bmp = Uri.fromFile(new File(paths.get(position)));
+    if(bmp != null){*/
+      Glide.with(ctx).load(paths.get(position)).
+              error(android.R.drawable.stat_notify_error).
+              into(holder.imgItem);
+   // }
   }
 
   @Override
@@ -51,10 +61,17 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
 
   public class MyViewHolder extends RecyclerView.ViewHolder {
     ImageView imgItem;
-    public MyViewHolder(@NonNull View itemView) {
+    int pos = 0;
+    public MyViewHolder(@NonNull final View itemView) {
       super(itemView);
-
       imgItem = itemView.findViewById(R.id.img_item);
+      imgItem.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          pos = (int) imgItem.getTag();
+          selectedUrisInterface.selectedImages(paths.get(pos));
+        }
+      });
     }
   }
 }
