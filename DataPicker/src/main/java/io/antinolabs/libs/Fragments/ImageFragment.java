@@ -74,4 +74,9 @@ public class ImageFragment extends Fragment implements SelectedUrisInterface {
     @Override
     public void selectedImages(String uri) {
     }
+
+    @Override
+    public void removeImages(String uri) {
+
+    }
 }

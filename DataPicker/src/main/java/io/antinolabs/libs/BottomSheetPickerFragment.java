@@ -53,7 +53,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   public BaseBuilder builder;
   private RecyclerView horiRecyclerView;
   FragmentPagerAdapter fragmentPagerAdapter;
-  TextView emptyTv;
+  TextView emptyHolderTv;
   HoriImageAdapter horiImageAdapter;
   ViewPager bottomViewPager;
   ArrayList<String> selectedImages = new ArrayList<>();
@@ -107,10 +107,10 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    emptyTv = view.findViewById(R.id.selected_photos_empty);
+    emptyHolderTv = view.findViewById(R.id.selected_photos_empty);
     horiRecyclerView = view.findViewById(R.id.horizontal_recycler);
-    horiRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
-    horiImageAdapter = new HoriImageAdapter(getActivity(),selectedImages);
+    horiRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),5));
+    horiImageAdapter = new HoriImageAdapter(getActivity(),selectedImages, this);
     horiRecyclerView.setAdapter(horiImageAdapter);
     doneBtn = view.findViewById(R.id.btn_done);
     doneBtn.setOnClickListener(this);
@@ -129,7 +129,16 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   @Override
   public void selectedImages(String uri) {
     selectedImages.add(uri);
-    emptyTv.setVisibility(View.GONE);
+    emptyHolderTv.setVisibility(View.GONE);
+    horiRecyclerView.invalidate();
+    horiImageAdapter.notifyDataSetChanged();
+  }
+
+  @Override
+  public void removeImages(String uri) {
+    selectedImages.remove(uri);
+    if (!(selectedImages.size() >0))
+      emptyHolderTv.setVisibility(View.VISIBLE);
     horiRecyclerView.invalidate();
     horiImageAdapter.notifyDataSetChanged();
   }
