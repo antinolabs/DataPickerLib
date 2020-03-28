@@ -11,7 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -19,13 +22,15 @@ import io.antinolabs.libs.Adapter.ImageAdapter;
 import io.antinolabs.libs.BottomSheetPickerFragment;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.R;
+import io.antinolabs.libs.Utils.Constants;
 import io.antinolabs.libs.Utils.ImageUtils;
+import io.antinolabs.libs.models.DataModel;
 
-public class ImageFragment extends Fragment implements SelectedUrisInterface {
+public class ImageFragment extends Fragment {
     private static final int ARG_PARAM1 = 0;
     public static final String ARG_OBJECT = "object";
     private static final String ARG_PARAM2 = "param2";
-    private int mParam1;
+    ArrayList<DataModel> imagePaths = new ArrayList<>();
     private String mParam2;
     ImageAdapter imageAdapter;
     RecyclerView recyclerView;
@@ -63,20 +68,13 @@ public class ImageFragment extends Fragment implements SelectedUrisInterface {
     recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
 
     if (mParam2.equals("Images")) {
-        ArrayList<String> imagePaths = ImageUtils.getAllImagesPath(this.getActivity());
+        imagePaths = ImageUtils.getAllImagesPath(this.getActivity());
         if (imagePaths.size() > 0) {
+            DataModel dataModel = new DataModel("", Constants.CAMERA_IMAGE);
+            imagePaths.add(0, dataModel);
             this.imageAdapter = new ImageAdapter(this.getContext(), imagePaths, selectedUrisInterface);
             recyclerView.setAdapter(imageAdapter);
         }
     }
-    }
-
-    @Override
-    public void selectedImages(String uri) {
-    }
-
-    @Override
-    public void removeImages(String uri) {
-
     }
 }

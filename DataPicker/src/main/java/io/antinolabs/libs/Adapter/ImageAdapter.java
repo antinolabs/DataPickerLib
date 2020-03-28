@@ -21,15 +21,17 @@ import java.util.ArrayList;
 import io.antinolabs.libs.BottomSheetPickerFragment;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.R;
+import io.antinolabs.libs.Utils.Constants;
 import io.antinolabs.libs.Utils.ImageUtils;
+import io.antinolabs.libs.models.DataModel;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
   private Context ctx;
-  private ArrayList<String> paths;
+  private ArrayList<DataModel> paths;
   SelectedUrisInterface selectedUrisInterface;
 
 
-  public ImageAdapter(Context ctx, ArrayList<String> paths, SelectedUrisInterface selectedUrisInterface) {
+  public ImageAdapter(Context ctx, ArrayList<DataModel> paths, SelectedUrisInterface selectedUrisInterface) {
     this.ctx = ctx;
     this.paths = paths;
     this.selectedUrisInterface = selectedUrisInterface;
@@ -48,10 +50,24 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     holder.imgItem.setTag(position);
     /*Uri bmp = Uri.fromFile(new File(paths.get(position)));
     if(bmp != null){*/
+
+    if(paths.get(position).getFileType()  == Constants.IMAGE){
       Glide.with(ctx).load(paths.get(position)).
-              error(android.R.drawable.stat_notify_error).
+              error(android.R.drawable.alert_dark_frame).
               into(holder.imgItem);
+    }
+    else if(paths.get(position).getFileType() == Constants.VIDEO){
+
+    }
+    else if(paths.get(position).getFileType() == Constants.CAMERA_IMAGE){
+      holder.imgItem.setBackgroundColor(ctx.getResources().getColor(R.color.semi_transparent));
+      Glide.with(ctx).load(R.drawable.ic_camera_alt_grey_24dp).into(holder.imgItem);
+    }
+    else{
+      //handle video camera case
+    }
    // }
+
   }
 
   @Override
@@ -61,7 +77,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
 
   public class MyViewHolder extends RecyclerView.ViewHolder {
     ImageView imgItem, selectedItem;
-    int pos = 0;
     public MyViewHolder(@NonNull final View itemView) {
       super(itemView);
       imgItem = itemView.findViewById(R.id.img_item);
@@ -69,12 +84,18 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
       imgItem.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-          pos = (int) imgItem.getTag();
-          if (selectedItem.getVisibility()==View.GONE){
-            selectedUrisInterface.selectedImages(paths.get(pos));
-          selectedItem.setVisibility(View.VISIBLE);}
-          else{selectedUrisInterface.removeImages(paths.get(pos));
-            selectedItem.setVisibility(View.GONE);}
+          if (paths.get(getAdapterPosition()).getFileType() == Constants.CAMERA_IMAGE) {
+              selectedUrisInterface.dispatchTakePictureIntent();
+          }
+          else {
+            if (selectedItem.getVisibility() == View.GONE) {
+              selectedUrisInterface.selectedImages(paths.get(getAdapterPosition()).getPath());
+              selectedItem.setVisibility(View.VISIBLE);
+            } else {
+              selectedUrisInterface.removeImages(paths.get(getAdapterPosition()).getPath());
+              selectedItem.setVisibility(View.GONE);
+            }
+          }
         }
       });
     }

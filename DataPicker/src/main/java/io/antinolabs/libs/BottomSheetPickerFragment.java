@@ -6,10 +6,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +38,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.tabs.TabLayout;
 
+import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -43,10 +46,11 @@ import java.util.List;
 
 import io.antinolabs.libs.Adapter.BottomViewPagerAdapter;
 import io.antinolabs.libs.Adapter.HoriImageAdapter;
-import io.antinolabs.libs.Adapter.ImageAdapter;
-import io.antinolabs.libs.Fragments.ImageFragment;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.Utils.ImageUtils;
+import io.antinolabs.libs.models.DataModel;
+
+import static android.app.Activity.RESULT_OK;
 
 public class BottomSheetPickerFragment extends BottomSheetDialogFragment implements View.OnClickListener, SelectedUrisInterface {
 
@@ -59,7 +63,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   ArrayList<String> selectedImages = new ArrayList<>();
   private Button doneBtn;
   private static final int PICK_FROM_GALLERY = 1;
-  private RecyclerView.LayoutManager layoutManager;
+  private static final int REQUEST_IMAGE_CAPTURE = 2;
   private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback(){
 
     @Override
@@ -79,7 +83,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     ft.commitAllowingStateLoss();
   }
 
-  private ArrayList<String> getAllImages(Activity activity){
+  private ArrayList<DataModel> getAllImages(Activity activity){
     ImageUtils imageUtils = new ImageUtils();
     return ImageUtils.getAllImagesPath(activity);
   }
@@ -143,6 +147,27 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     horiImageAdapter.notifyDataSetChanged();
   }
 
+  @Override
+  public void dispatchTakePictureIntent() {
+    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+      startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+    }
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+      /*Bundle extras = data.getExtras();
+      Bitmap imageBitmap = (Bitmap) extras.get("data");*/
+      if (data != null) {
+        Uri imageUri = data.getData();
+        selectedImages.add(imageUri.toString());
+      }
+
+    }
+  }
+
   public interface OnMultiImageSelectedListener {
     void onImagesSelected(List<Uri> uriList);
   }
@@ -181,17 +206,14 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
                 ("You have to use setOnImageSelectedListener() or setOnMultiImageSelectedListener() for receive selected Uri");
       }
         if (ActivityCompat.checkSelfPermission(fragmentActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-          ActivityCompat.requestPermissions(fragmentActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PICK_FROM_GALLERY);
-        }
-        else {
-          BottomSheetPickerFragment customBottomSheetDialogFragment = new BottomSheetPickerFragment();
-          customBottomSheetDialogFragment.builder = this;
-          return customBottomSheetDialogFragment;
+          ActivityCompat.requestPermissions(fragmentActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, PICK_FROM_GALLERY);
         }
       } catch (Exception e) {
         e.printStackTrace();
       }
-      return null;
+      BottomSheetPickerFragment customBottomSheetDialogFragment = new BottomSheetPickerFragment();
+      customBottomSheetDialogFragment.builder = this;
+      return customBottomSheetDialogFragment;
     }
 
     @Retention(RetentionPolicy.SOURCE)

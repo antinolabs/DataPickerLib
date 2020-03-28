@@ -10,6 +10,8 @@ import android.provider.MediaStore;
 import java.io.File;
 import java.util.ArrayList;
 
+import io.antinolabs.libs.models.DataModel;
+
 public class ImageUtils {
 
   /**
@@ -19,11 +21,11 @@ public class ImageUtils {
    *            the activity
    * @return ArrayList with images Path
    */
-  public static ArrayList<String> getAllImagesPath(Activity activity) {
+  public static ArrayList<DataModel> getAllImagesPath(Activity activity) {
     Uri uri;
     Cursor cursor;
     int column_index_data, column_index_folder_name;
-    ArrayList<String> listOfAllImages = new ArrayList<String>();
+    ArrayList<DataModel> listOfAllImages = new ArrayList<>();
     String absolutePathOfImage = null;
     uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
@@ -38,8 +40,10 @@ public class ImageUtils {
       .getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
     while (cursor.moveToNext()) {
       absolutePathOfImage = cursor.getString(column_index_data);
-
-      listOfAllImages.add(absolutePathOfImage);
+      DataModel dataModel = new DataModel(
+              absolutePathOfImage,
+              Constants.IMAGE);
+      listOfAllImages.add(dataModel);
     }
     return listOfAllImages;
   }
