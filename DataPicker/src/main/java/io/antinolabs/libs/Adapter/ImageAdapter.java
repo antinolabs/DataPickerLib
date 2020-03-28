@@ -2,10 +2,13 @@ package io.antinolabs.libs.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +24,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
+import io.antinolabs.libs.BottomSheetPickerFragment;
+import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.R;
+import io.antinolabs.libs.Utils.ImageUtils;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
   private Context ctx;
@@ -37,7 +43,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     this.paths = imagePaths;
     this.selectedUrisInterface = selectedUrisInterface;
   }
-
 
   @NonNull
   @Override
@@ -72,6 +77,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     ImageView imgitemgallery;
     int pos = 0;
     public MyViewHolder(@NonNull final View itemView) {
+    ImageView imgItem, selectedItem;
+    int pos = 0;
+    public MyViewHolder(@NonNull final View itemView) {
       super(itemView);
       imgitemgallery = itemView.findViewById(R.id.img_item_gallery);
       imgitemgallery.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +90,19 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
           {
           }
           selectedUrisInterface.selectedImages(paths.get(pos));
+        }
+      });
+      imgItem = itemView.findViewById(R.id.img_item);
+      selectedItem = itemView.findViewById(R.id.selected_iv);
+      imgItem.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          pos = (int) imgItem.getTag();
+          if (selectedItem.getVisibility()==View.GONE){
+            selectedUrisInterface.selectedImages(paths.get(pos));
+          selectedItem.setVisibility(View.VISIBLE);}
+          else{selectedUrisInterface.removeImages(paths.get(pos));
+            selectedItem.setVisibility(View.GONE);}
         }
       });
     }
