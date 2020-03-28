@@ -63,8 +63,6 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   private RecyclerView horiRecyclerView;
   FragmentPagerAdapter fragmentPagerAdapter;
   TextView emptyTv,bottomsheetTvHeading;
-    ;
-  TextView bottomsheetTvHeading;
   private View contentView;
   private PagerTabStrip pagerTabStrip;
   private boolean checked = false;
@@ -122,10 +120,10 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    emptyTv = view.findViewById(R.id.selected_photos_empty);
+    emptyHolderTv = view.findViewById(R.id.selected_photos_empty);
     horiRecyclerView = view.findViewById(R.id.horizontal_recycler);
-    horiRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
-    horiImageAdapter = new HoriImageAdapter(getActivity(),selectedImages);
+    horiRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),5));
+    horiImageAdapter = new HoriImageAdapter(getActivity(),selectedImages,this);
     horiRecyclerView.setAdapter(horiImageAdapter);
     doneBtn = view.findViewById(R.id.btn_done);
     doneBtn.setOnClickListener(this);
@@ -148,8 +146,8 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     pagerTabStrip.setTextColor(builder.colorCodePagerstripText);
     pagerTabStrip.setTabIndicatorColor(builder.colorCodePagerstripUnderline);
 
-    emptyTv.setText(builder.selectedEmptyText);
-    emptyTv.setTextColor(builder.selectedcoloremptyText);
+    emptyHolderTv.setText(builder.selectedEmptyText);
+    emptyHolderTv.setTextColor(builder.selectedcoloremptyText);
 
     //
     if(builder.checked)
@@ -167,19 +165,6 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
       dismiss();
     }
   }
-
-  @Override
-  public void selectedImages(String uri) {
-    selectedImages.add(uri);
-    emptyTv.setVisibility(View.GONE);
-    horiRecyclerView.invalidate();
-    horiImageAdapter.notifyDataSetChanged();
-  }
-
-  @Override
-  public void selectedImages(List<String> uri) {
-    selectedImages.addAll(uri);
-    emptyTv.setVisibility(View.GONE);
 
   @Override
   public void selectedImages(String uri) {
@@ -214,6 +199,9 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     int selectMaxCount;
     OnImageSelectedListener onImageSelectedListener;
     OnMultiImageSelectedListener onMultiImageSelectedListener;
+    private String setTextHeading,setTextClosing,selectedEmptyText,ToastText;
+    boolean vedioVariable,imageVariable,checked;
+    private int colorcodeBackGround,colorCodePagerstripUnderline,colorCodePagerstripText,selectedcoloremptyText;
 
     BaseBuilder(@NonNull FragmentActivity fragmentActivity) {
 

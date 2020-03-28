@@ -33,21 +33,8 @@ public class MainActivity extends AppCompatActivity {
       .show(new BottomSheetPickerFragment.OnImageSelectedListener() {
         @Override
         public void onImageSelected(Uri uri) {
-    Button button = findViewById(R.id.buttonAdd);
-    button.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            DataPicker
-                    .with(MainActivity.this)
-                    .setSelectMaxCount(2)
-                    .show(new BottomSheetPickerFragment.OnImageSelectedListener() {
-                        @Override
-                        public void onImageSelected(Uri uri) {
 
-                        }
-                    });
-        }
-    });
+
 
         }
       });

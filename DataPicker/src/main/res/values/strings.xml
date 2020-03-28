@@ -1,8 +1,5 @@
 <resources>
-  <string name="app_name">DataPicker</string>
-  <string name="done">Done</string>
-  <string name="tedbottompicker_title"></string>
-  <string name="no_image">No Images Selected</string>
+
     <string name="app_name">DataPicker</string>
     <string name="done">Done</string>
     <string name="bottompicker_title">Select media</string>

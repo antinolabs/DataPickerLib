@@ -21,29 +21,11 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:text="@string/done"
-        android:textColor="?attr/colorAccent"
-        android:textSize="16sp"/>
-      android:id="@+id/btn_done"
-      style="?borderlessButtonStyle"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_centerVertical="true"
-      android:text="@string/done"
         android:gravity="right|center_vertical"
-      android:textColor="@android:color/black"
-      android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true" />
-
-
-      <TextView
-          android:id="@+id/tv_title"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_centerVertical="true"
-          android:layout_margin="16dp"
-          android:textSize="16sp"
-          />
+        />
     <TextView
       android:id="@+id/tv_title"
       android:layout_width="match_parent"
@@ -68,25 +50,10 @@
       android:minHeight="145dp"
       android:layout_gravity="center"
       android:background="@color/picker_selected"
-      android:layout_alignParentBottom="true"
-    android:id="@+id/selected_photos_container_frame"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-      android:minHeight="80dp"
       android:paddingLeft="2dp"
-      android:background="@color/picker_selected"
     android:layout_alignParentBottom="true"
 
     >
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/horizontal_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/picker_selected"
-        android:orientation="horizontal"
-        android:nestedScrollingEnabled="true"
-        />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/horizontal_recycler"
       android:layout_width="match_parent"
@@ -125,14 +92,7 @@
         android:layout_gravity="center"
         android:text="@string/no_image"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="?attr/colorAccent"/>
-      android:id="@+id/selected_photos_empty"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:text="@string/no_image"
-      android:textAppearance="?android:attr/textAppearanceSmall"
-      android:textColor="@android:color/darker_gray"/>
+        android:textColor="@android:color/darker_gray"/>
   </FrameLayout>
 
   <!--<androidx.recyclerview.widget.RecyclerView
@@ -140,21 +100,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     />-->
-  <androidx.viewpager.widget.ViewPager
-      android:id="@+id/bottom_view_pager"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent" >
-    <androidx.viewpager.widget.PagerTabStrip
-        android:id="@+id/pager_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp" />
-
-  </androidx.viewpager.widget.ViewPager>
-
-
   <androidx.viewpager.widget.ViewPager
       android:id="@+id/bottom_view_pager"
       android:layout_width="match_parent"
