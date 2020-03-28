@@ -1,86 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:orientation="vertical"
-  >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/parent_content"
+    android:orientation="vertical"
+    >
 
   <RelativeLayout
-    android:id="@+id/view_title_container"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
+      android:id="@+id/view_title_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      >
 
 
     <Button
-      android:id="@+id/btn_done"
-      style="?borderlessButtonStyle"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentRight="true"
-      android:layout_centerVertical="true"
-      android:text="@string/done"
-      android:textColor="?attr/colorAccent"
-      android:textSize="16sp"/>
+        android:id="@+id/btn_done"
+        style="?borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="@string/done"
+        android:textColor="?attr/colorAccent"
+        android:textSize="16sp"/>
 
-    <TextView
-      android:id="@+id/tv_title"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_centerVertical="true"
-      android:layout_margin="16dp"
-      android:layout_toLeftOf="@id/btn_done"
-      android:text="@string/tedbottompicker_title"
-      android:textSize="16sp"
-      />
+
+      <TextView
+          android:id="@+id/tv_title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:layout_margin="16dp"
+          android:textSize="16sp"
+          />
+
+
+
 
   </RelativeLayout>
 
 
   <FrameLayout
-    android:id="@+id/selected_photos_container_frame"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/tedbottompicker_selected_image_height"
-    android:layout_alignParentBottom="true"
-
-    >
-
-    <HorizontalScrollView
+      android:id="@+id/selected_photos_container_frame"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
+      android:layout_height="wrap_content"
+      android:minHeight="145dp"
+      android:layout_gravity="center"
       android:background="@color/picker_selected"
-      android:fillViewport="false"
+      android:layout_alignParentBottom="true"
 
-      android:foregroundGravity="left"
       >
 
-      <LinearLayout
-        android:id="@+id/selected_photos_container"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="left"
-        android:animateLayoutChanges="false"
-        android:gravity="left"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/horizontal_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/picker_selected"
         android:orientation="horizontal"
-        android:visibility="gone"/>
-    </HorizontalScrollView>
+        android:nestedScrollingEnabled="true"
+        />
+
+    <!--<LinearLayout
+      android:id="@+id/selected_photos_container"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_gravity="left"
+      android:animateLayoutChanges="false"
+      android:gravity="left"
+      android:orientation="horizontal"
+      android:visibility="gone"/>
+  </androidx.recyclerview.widget.RecyclerView>-->
 
     <TextView
-      android:id="@+id/selected_photos_empty"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:text="@string/no_image"
-      android:textAppearance="?android:attr/textAppearanceSmall"
-      android:textColor="?attr/colorAccent"/>
+        android:id="@+id/selected_photos_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/no_image"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?attr/colorAccent"/>
   </FrameLayout>
 
-  <androidx.recyclerview.widget.RecyclerView
+  <!--<androidx.recyclerview.widget.RecyclerView
     android:id="@+id/rc_gallery"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    />
+    />-->
+  <androidx.viewpager.widget.ViewPager
+      android:id="@+id/bottom_view_pager"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" >
+    <androidx.viewpager.widget.PagerTabStrip
+        android:id="@+id/pager_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp" />
+
+  </androidx.viewpager.widget.ViewPager>
+
+
 
 </LinearLayout>
