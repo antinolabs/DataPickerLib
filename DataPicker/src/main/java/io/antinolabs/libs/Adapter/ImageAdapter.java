@@ -11,16 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 
-import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
-import io.antinolabs.libs.BottomSheetPickerFragment;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.R;
 import io.antinolabs.libs.Utils.Constants;
-import io.antinolabs.libs.Utils.ImageUtils;
 import io.antinolabs.libs.models.DataModel;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
@@ -44,7 +39,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
 
   @Override
   public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-    //Bitmap bmp = ImageUtils.getBitmapFromPath(paths.get(position));
+    //Bitmap bmp = Utils.getBitmapFromPath(paths.get(position));
     holder.imgItem.setTag(position);
     /*Uri bmp = Uri.fromFile(new File(paths.get(position)));
     if(bmp != null){*/

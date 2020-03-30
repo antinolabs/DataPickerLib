@@ -11,14 +11,10 @@ import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 public class BottomViewPagerAdapter extends FragmentPagerAdapter {
     private static int NUM_ITEMS = 2;
     SelectedUrisInterface selectedUrisInterface;
-    private boolean imageVariable;
-    private boolean videoVariable;
 
-    public BottomViewPagerAdapter(@NonNull FragmentManager fm, BottomSheetPickerFragment selectedUrisInterface, boolean imageVariable, boolean vediovariable) {
+    public BottomViewPagerAdapter(@NonNull FragmentManager fm, BottomSheetPickerFragment selectedUrisInterface) {
         super(fm);
         this.selectedUrisInterface = selectedUrisInterface;
-        this.imageVariable=imageVariable;
-        this.videoVariable=vediovariable;
     }
 
     @NonNull
@@ -26,9 +22,9 @@ public class BottomViewPagerAdapter extends FragmentPagerAdapter {
     public ImageFragment getItem(int position) {
         switch (position) {
             case 0:
-                return ImageFragment.newInstance(selectedUrisInterface, "Images",imageVariable,videoVariable);
+                return ImageFragment.newInstance(selectedUrisInterface, "Images");
             case 1:
-                return ImageFragment.newInstance(selectedUrisInterface, "Videos",imageVariable,videoVariable);
+                return ImageFragment.newInstance(selectedUrisInterface, "Videos");
             default:
                 return null;
         }

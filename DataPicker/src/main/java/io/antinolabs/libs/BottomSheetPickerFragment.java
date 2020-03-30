@@ -7,11 +7,9 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,9 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -37,14 +33,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerTabStrip;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.snackbar.Snackbar;
 
-import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -53,10 +45,7 @@ import java.util.List;
 import io.antinolabs.libs.Adapter.BottomViewPagerAdapter;
 import io.antinolabs.libs.Adapter.HoriImageAdapter;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
-import io.antinolabs.libs.Adapter.BottomViewPagerAdapter;
-import io.antinolabs.libs.Adapter.HoriImageAdapter;
-import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
-import io.antinolabs.libs.Utils.ImageUtils;
+import io.antinolabs.libs.Utils.Utils;
 import io.antinolabs.libs.models.DataModel;
 
 import static android.app.Activity.RESULT_OK;
@@ -97,8 +86,8 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   }
 
   private ArrayList<DataModel> getAllImages(Activity activity){
-    ImageUtils imageUtils = new ImageUtils();
-    return ImageUtils.getAllImagesPath(activity);
+    Utils utils = new Utils();
+    return Utils.getAllImagesPath(activity);
   }
 
   @SuppressLint("RestrictedApi")
@@ -208,7 +197,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
         Bundle extras = data.getExtras();
         Bitmap imageBitmap = (Bitmap) extras.get("data");
         if (imageBitmap != null) {
-          Uri uri = ImageUtils.getImageUri(getContext(), imageBitmap);
+          Uri uri = Utils.getImageUri(getContext(), imageBitmap);
           selectedImages.add(uri.toString());
 
           horiImageAdapter.notifyDataSetChanged();

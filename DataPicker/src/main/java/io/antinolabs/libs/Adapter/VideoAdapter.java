@@ -1,6 +1,7 @@
 package io.antinolabs.libs.Adapter;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +18,14 @@ import java.util.ArrayList;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.R;
 import io.antinolabs.libs.Utils.ModelVideo;
+import io.antinolabs.libs.models.DataModel;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder> {
     private Context ctx;
-    private ArrayList<ModelVideo> paths;
+    private ArrayList<DataModel> paths;
     SelectedUrisInterface selectedUrisInterface;
-    int currentPosition=1;
 
-
-
-
-    public VideoAdapter(Context context, ArrayList<ModelVideo> imagePaths, SelectedUrisInterface selectedUrisInterface) {
+    public VideoAdapter(Context context, ArrayList<DataModel> imagePaths, SelectedUrisInterface selectedUrisInterface) {
         this.ctx = context;
         this.paths = imagePaths;
         this.selectedUrisInterface = selectedUrisInterface;
@@ -48,7 +46,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
         if (PlayStopButtonState == 0) {
             holder.imgitemgallery.setImageResource(R.drawable.ic_camera_alt_black_24dp);
         } else {
-            Glide.with(ctx).load(paths.get(position).getStrpath()).
+            Glide.with(ctx).load(paths.get(position).getPath()).
                     error(android.R.drawable.stat_notify_error).
                     into(holder.imgitemgallery);
             holder.imgitemgallery.setTag(1);
@@ -72,11 +70,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
             imgitemgallery.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    pos = (int) imgitemgallery.getTag();
-                    if(pos==0)
-                    {
-                    }
-                    selectedUrisInterface.selectedImages(paths.get(pos).getStrthumb());
+                    selectedUrisInterface.selectedImages(paths.get(pos).getPath());
                 }
             });
         }
