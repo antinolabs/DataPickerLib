@@ -1,10 +1,10 @@
 package io.antinolabs.libs.Adapter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import io.antinolabs.libs.BottomSheetPickerFragment;
 import io.antinolabs.libs.Fragments.ImageFragment;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 
@@ -12,14 +12,14 @@ public class BottomViewPagerAdapter extends FragmentPagerAdapter {
     private static int NUM_ITEMS = 2;
     SelectedUrisInterface selectedUrisInterface;
 
-    public BottomViewPagerAdapter(@NonNull FragmentManager fm, SelectedUrisInterface selectedUrisInterface) {
+    public BottomViewPagerAdapter(@NonNull FragmentManager fm, BottomSheetPickerFragment selectedUrisInterface) {
         super(fm);
         this.selectedUrisInterface = selectedUrisInterface;
     }
 
     @NonNull
     @Override
-    public Fragment getItem(int position) {
+    public ImageFragment getItem(int position) {
         switch (position) {
             case 0:
                 return ImageFragment.newInstance(selectedUrisInterface, "Images");
@@ -39,7 +39,7 @@ public class BottomViewPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         if (position == 0)
-        return "Images";
+            return "Images";
         else
             return "Videos";
     }

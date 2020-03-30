@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 
 import java.io.ByteArrayOutputStream;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 
 import io.antinolabs.libs.models.DataModel;
 
-public class ImageUtils {
+public class Utils {
 
   /**
    * Getting All Images Path.
@@ -24,30 +25,42 @@ public class ImageUtils {
    * @return ArrayList with images Path
    */
   public static ArrayList<DataModel> getAllImagesPath(Activity activity) {
-    Uri uri;
+    Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+    String bucketName = MediaStore.Images.Media.BUCKET_DISPLAY_NAME;
+
+    return prepareGallaryData(activity, uri, bucketName, Constants.IMAGE);
+  }
+
+  public static ArrayList<DataModel> getAllVideosPath(Activity activity){
+    Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+    String bucketName = MediaStore.Video.Media.BUCKET_DISPLAY_NAME;
+
+    return prepareGallaryData(activity, uri, bucketName, Constants.VIDEO);
+  }
+
+  private static ArrayList<DataModel> prepareGallaryData(Activity activity, Uri uri, String bucketName, int type){
     Cursor cursor;
-    int column_index_data, column_index_folder_name;
-    ArrayList<DataModel> listOfAllImages = new ArrayList<>();
+    int column_index_data;
     String absolutePathOfImage = null;
-    uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+    ArrayList<DataModel> paths = new ArrayList<>();
 
     String[] projection = { MediaStore.MediaColumns.DATA,
-      MediaStore.Images.Media.BUCKET_DISPLAY_NAME };
+      bucketName};
 
     cursor = activity.getContentResolver().query(uri, projection, null,
       null, null);
 
     column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-    column_index_folder_name = cursor
-      .getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+
     while (cursor.moveToNext()) {
       absolutePathOfImage = cursor.getString(column_index_data);
       DataModel dataModel = new DataModel(
-              absolutePathOfImage,
-              Constants.IMAGE);
-      listOfAllImages.add(dataModel);
+        absolutePathOfImage,
+        type);
+      paths.add(dataModel);
     }
-    return listOfAllImages;
+
+    return paths;
   }
 
   public static Uri getImageUri(Context inContext, Bitmap inImage) {

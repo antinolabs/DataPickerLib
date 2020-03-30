@@ -16,13 +16,13 @@ import java.util.ArrayList;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.R;
 
-public class HoriImageAdapter extends RecyclerView.Adapter<HoriImageAdapter.MyViewHolder>{
+public class HoriImageAdapter extends RecyclerView.Adapter<HoriImageAdapter.MyViewHolder> {
 
     private Context ctx;
     private ArrayList<String> paths;
     SelectedUrisInterface selectedUrisInterface;
 
-    public HoriImageAdapter(Context ctx, ArrayList<String> paths, SelectedUrisInterface selectedUrisInterface) {
+    public HoriImageAdapter(Context ctx, ArrayList<String> paths,SelectedUrisInterface selectedUrisInterface) {
         this.ctx = ctx;
         this.paths = paths;
         this.selectedUrisInterface = selectedUrisInterface;
@@ -30,6 +30,7 @@ public class HoriImageAdapter extends RecyclerView.Adapter<HoriImageAdapter.MyVi
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imgItem, removeImg;
+
         public MyViewHolder(@NonNull final View itemView) {
             super(itemView);
             imgItem = itemView.findViewById(R.id.img_item_hori);
@@ -55,6 +56,7 @@ public class HoriImageAdapter extends RecyclerView.Adapter<HoriImageAdapter.MyVi
         Glide.with(ctx).load(paths.get(position)).
                 error(android.R.drawable.alert_dark_frame).
                 into(holder.imgItem);
+
     }
 
     @Override
