@@ -37,7 +37,7 @@ public class HoriImageAdapter extends RecyclerView.Adapter<HoriImageAdapter.MyVi
             removeImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    selectedUrisInterface.removeImages(paths.get((int) imgItem.getTag()));
+                    selectedUrisInterface.removeImages(paths.get(getAdapterPosition()));
                 }
             });
         }
@@ -52,9 +52,8 @@ public class HoriImageAdapter extends RecyclerView.Adapter<HoriImageAdapter.MyVi
 
     @Override
     public void onBindViewHolder(@NonNull HoriImageAdapter.MyViewHolder holder, int position) {
-        holder.imgItem.setTag(position);
         Glide.with(ctx).load(paths.get(position)).
-                error(android.R.drawable.stat_notify_error).
+                error(android.R.drawable.alert_dark_frame).
                 into(holder.imgItem);
     }
 
