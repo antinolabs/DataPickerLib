@@ -220,7 +220,8 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
                 ("You have to use setOnImageSelectedListener() or setOnMultiImageSelectedListener() for receive selected Uri");
       }
         if (ActivityCompat.checkSelfPermission(fragmentActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-          ActivityCompat.requestPermissions(fragmentActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, PICK_FROM_GALLERY);
+          throw new RuntimeException
+            ("Please check external storage permission.");
         }
       } catch (Exception e) {
         e.printStackTrace();
