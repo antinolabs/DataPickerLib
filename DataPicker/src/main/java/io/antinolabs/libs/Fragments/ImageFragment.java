@@ -12,6 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,15 +24,17 @@ import io.antinolabs.libs.Adapter.ImageAdapter;
 import io.antinolabs.libs.Adapter.VideoAdapter;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.R;
+import io.antinolabs.libs.Utils.Constants;
 import io.antinolabs.libs.Utils.ImageUtils;
 import io.antinolabs.libs.Utils.ModelVideo;
 import io.antinolabs.libs.Utils.VideoUtils;
+import io.antinolabs.libs.models.DataModel;
 
-public class ImageFragment extends Fragment implements SelectedUrisInterface {
-    private static final String ARG_PARAM1 = "param1";
+public class ImageFragment extends Fragment {
+    private static final int ARG_PARAM1 = 0;
     public static final String ARG_OBJECT = "object";
     private static final String ARG_PARAM2 = "param2";
-    private String mParam1;
+    ArrayList<DataModel> imagePaths = new ArrayList<>();
     private String mParam2;
     ImageAdapter imageAdapter;
     VideoAdapter videoAdapter;
@@ -71,17 +77,14 @@ public class ImageFragment extends Fragment implements SelectedUrisInterface {
         recyclerView = view.findViewById(R.id.rc_gallery);
         recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
 
-        if (mParam2.equals("Images")) {
-            Log.d("Videos", "onViewCreated: "+mParam2);
-            if(imagevariable)
-            {
-                ArrayList<String> imagePaths = ImageUtils.getAllImagesPath(this.getActivity());
-                if (imagePaths.size() > 0) {
-                    this.imageAdapter = new ImageAdapter(this.getContext(), imagePaths, selectedUrisInterface);
-                    recyclerView.setAdapter(imageAdapter);
-                }
-            }
-
+    if (mParam2.equals("Images")) {
+        imagePaths = ImageUtils.getAllImagesPath(this.getActivity());
+        Log.e("Size:", String.valueOf(imagePaths.size()));
+        if (imagePaths.size() > 0 && imageVariable) {
+            DataModel dataModel = new DataModel("", Constants.CAMERA_IMAGE);
+            imagePaths.add(0, dataModel);
+            this.imageAdapter = new ImageAdapter(this.getContext(), imagePaths, selectedUrisInterface);
+            recyclerView.setAdapter(imageAdapter);
         }
        else if(mParam2.equals("Videos"))
         {
@@ -97,15 +100,4 @@ public class ImageFragment extends Fragment implements SelectedUrisInterface {
             }
         }
     }
-
-    @Override
-    public void selectedImages(String uri) {
-    }
-
-    @Override
-    public void removeImages(String uri) {
-
-    }
-
 }
-
