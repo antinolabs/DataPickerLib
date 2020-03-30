@@ -111,13 +111,20 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    initViews(view);
+  }
+
+  private void initViews(View view) {
     emptyHolderTv = view.findViewById(R.id.selected_photos_empty);
     horiRecyclerView = view.findViewById(R.id.horizontal_recycler);
     horiRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),5));
     horiImageAdapter = new HoriImageAdapter(getActivity(),selectedImages, this);
     horiRecyclerView.setAdapter(horiImageAdapter);
+
     doneBtn = view.findViewById(R.id.btn_done);
     doneBtn.setOnClickListener(this);
+
+    //initialize fragments
     fragmentPagerAdapter = new BottomViewPagerAdapter(getChildFragmentManager(), this);
     bottomViewPager = view.findViewById(R.id.bottom_view_pager);
     bottomViewPager.setAdapter(fragmentPagerAdapter);
@@ -158,11 +165,18 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   @Override
   public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-      /*Bundle extras = data.getExtras();
-      Bitmap imageBitmap = (Bitmap) extras.get("data");*/
-      if (data != null) {
-        Uri imageUri = data.getData();
-        selectedImages.add(imageUri.toString());
+      try {
+        Bundle extras = data.getExtras();
+        Bitmap imageBitmap = (Bitmap) extras.get("data");
+        if (imageBitmap != null) {
+          Uri uri = ImageUtils.getImageUri(getContext(), imageBitmap);
+          selectedImages.add(uri.toString());
+
+          horiImageAdapter.notifyDataSetChanged();
+        }
+      }
+      catch (NullPointerException e){
+
       }
 
     }

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,11 +65,12 @@ public class ImageFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        recyclerView = view.findViewById(R.id.rc_gallery);
+      recyclerView = view.findViewById(R.id.rc_gallery);
     recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
 
     if (mParam2.equals("Images")) {
         imagePaths = ImageUtils.getAllImagesPath(this.getActivity());
+        Log.e("Size:", String.valueOf(imagePaths.size()));
         if (imagePaths.size() > 0) {
             DataModel dataModel = new DataModel("", Constants.CAMERA_IMAGE);
             imagePaths.add(0, dataModel);

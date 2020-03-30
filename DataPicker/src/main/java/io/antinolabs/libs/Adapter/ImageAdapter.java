@@ -52,7 +52,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     if(bmp != null){*/
 
     if(paths.get(position).getFileType()  == Constants.IMAGE){
-      Glide.with(ctx).load(paths.get(position)).
+      Glide.with(ctx).load(paths.get(position).getPath()).
               error(android.R.drawable.alert_dark_frame).
               into(holder.imgItem);
     }
