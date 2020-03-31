@@ -44,6 +44,8 @@ import java.util.List;
 
 import io.antinolabs.libs.Adapter.BottomViewPagerAdapter;
 import io.antinolabs.libs.Adapter.HoriImageAdapter;
+import io.antinolabs.libs.Adapter.ImageAdapter;
+import io.antinolabs.libs.Fragments.ImageFragment;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.Utils.Utils;
 import io.antinolabs.libs.models.DataModel;
@@ -55,7 +57,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   public BaseBuilder builder;
   private RecyclerView horiRecyclerView;
   FragmentPagerAdapter fragmentPagerAdapter;
-  TextView emptyTv,bottomsheetTvHeading;
+  TextView bottomsheetTvHeading;
   private View contentView;
   private PagerTabStrip pagerTabStrip;
   private boolean checked = false;
@@ -66,6 +68,8 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   private Button doneBtn;
   private static final int PICK_FROM_GALLERY = 1;
   private static final int REQUEST_IMAGE_CAPTURE = 2;
+  static final int REQUEST_VIDEO_CAPTURE = 0;
+  SelectedUrisInterface selectedUrisInterface = this;
   private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback(){
 
     @Override
@@ -117,37 +121,31 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   }
 
   private void initViews(View view) {
+
     emptyHolderTv = view.findViewById(R.id.selected_photos_empty);
     horiRecyclerView = view.findViewById(R.id.horizontal_recycler);
     horiRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),5));
     horiImageAdapter = new HoriImageAdapter(getActivity(),selectedImages,this);
     horiRecyclerView.setAdapter(horiImageAdapter);
-
     doneBtn = view.findViewById(R.id.btn_done);
     doneBtn.setOnClickListener(this);
-
     //initialize fragments
     fragmentPagerAdapter = new BottomViewPagerAdapter(getChildFragmentManager(), this);
     bottomViewPager = view.findViewById(R.id.bottom_view_pager);
     bottomViewPager.setAdapter(fragmentPagerAdapter);
-
     //seting TextprogramaticallyHeading
     bottomsheetTvHeading = view.findViewById(R.id.tv_title);
     bottomsheetTvHeading.setText(builder.setTextHeading);
-
     //setting TextProgramaticallyClosingButton
     doneBtn.setText(builder.setTextClosing);
-
     //pagerTabStrip DynamicCodeFunctionality
     pagerTabStrip = view.findViewById(R.id.pager_header);
     pagerTabStrip.setBackgroundColor(builder.colorcodeBackGround);
     pagerTabStrip.setDrawFullUnderline(false);
     pagerTabStrip.setTextColor(builder.colorCodePagerstripText);
     pagerTabStrip.setTabIndicatorColor(builder.colorCodePagerstripUnderline);
-
     emptyHolderTv.setText(builder.selectedEmptyText);
     emptyHolderTv.setTextColor(builder.selectedcoloremptyText);
-
     //
     if(builder.checked)
     {
@@ -191,6 +189,14 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   }
 
   @Override
+  public void dispatchTakeVideoIntent() {
+    Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+    if (takeVideoIntent.resolveActivity(getContext().getPackageManager()) != null) {
+      startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+    }
+  }
+
+  @Override
   public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
       try {
@@ -198,15 +204,16 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
         Bitmap imageBitmap = (Bitmap) extras.get("data");
         if (imageBitmap != null) {
           Uri uri = Utils.getImageUri(getContext(), imageBitmap);
-          selectedImages.add(uri.toString());
-
+          selectedImages(uri.toString());
           horiImageAdapter.notifyDataSetChanged();
         }
       }
       catch (NullPointerException e){
-
       }
-
+    }
+    if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
+      Uri videoUri = data.getData();
+      selectedImages(videoUri.toString());
     }
   }
 
@@ -312,7 +319,8 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
                   ("You have to use setOnImageSelectedListener() or setOnMultiImageSelectedListener() for receive selected Uri");
         }
         if (ActivityCompat.checkSelfPermission(fragmentActivity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-          ActivityCompat.requestPermissions(fragmentActivity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PICK_FROM_GALLERY);
+          throw new RuntimeException
+                  ("Please check external storage permission.");
         }
       } catch (Exception e) {
         e.printStackTrace();

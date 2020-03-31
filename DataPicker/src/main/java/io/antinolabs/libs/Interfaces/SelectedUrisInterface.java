@@ -9,4 +9,6 @@ public interface SelectedUrisInterface {
     public void removeImages(String uri);
 
     public void dispatchTakePictureIntent();
+
+    public void dispatchTakeVideoIntent();
 }

@@ -34,13 +34,9 @@ public class VideoUtils {
             obj_model.setBooleanselected(false);
             obj_model.setStrpath(absolutePathOfVideo);
             obj_model.setStrthumb(cursor.getString(thum));
-
             listOfAllVideos.add(obj_model);
         }
-
-
         return listOfAllVideos;
-
     }
 
 }
