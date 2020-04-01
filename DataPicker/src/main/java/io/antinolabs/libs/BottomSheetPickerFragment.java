@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -39,13 +40,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.antinolabs.libs.Adapter.BottomViewPagerAdapter;
 import io.antinolabs.libs.Adapter.HoriImageAdapter;
-import io.antinolabs.libs.Adapter.ImageAdapter;
-import io.antinolabs.libs.Fragments.ImageFragment;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.Utils.Utils;
 import io.antinolabs.libs.models.DataModel;
@@ -60,16 +60,14 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   TextView bottomsheetTvHeading;
   private View contentView;
   private PagerTabStrip pagerTabStrip;
-  private boolean checked = false;
   TextView emptyHolderTv;
   HoriImageAdapter horiImageAdapter;
   ViewPager bottomViewPager;
-  ArrayList<String> selectedImages = new ArrayList<>();
+  ArrayList<Uri> selectedImages = new ArrayList<>();
   private Button doneBtn;
-  private static final int PICK_FROM_GALLERY = 1;
   private static final int REQUEST_IMAGE_CAPTURE = 2;
   static final int REQUEST_VIDEO_CAPTURE = 0;
-  SelectedUrisInterface selectedUrisInterface = this;
+
   private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback(){
 
     @Override
@@ -165,7 +163,8 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
 
   @Override
   public void selectedImages(String uri) {
-    selectedImages.add(uri);
+    selectedImages.add(Uri.parse(uri));
+    builder.onImageSelectedListener.onImageSelected(Uri.parse(uri));
     emptyHolderTv.setVisibility(View.GONE);
     horiRecyclerView.invalidate();
     horiImageAdapter.notifyDataSetChanged();
@@ -173,7 +172,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
 
   @Override
   public void removeImages(String uri) {
-    selectedImages.remove(uri);
+    selectedImages.remove(Uri.parse(uri));
     if (!(selectedImages.size() >0))
       emptyHolderTv.setVisibility(View.VISIBLE);
     horiRecyclerView.invalidate();
@@ -231,9 +230,9 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     int selectMaxCount;
     OnImageSelectedListener onImageSelectedListener;
     OnMultiImageSelectedListener onMultiImageSelectedListener;
-    private String setTextHeading,setTextClosing,selectedEmptyText,ToastText;
-    boolean vedioVariable,imageVariable,checked;
-    private int colorcodeBackGround,colorCodePagerstripUnderline,colorCodePagerstripText,selectedcoloremptyText;
+    private String setTextHeading, setTextClosing, selectedEmptyText, ToastText;
+    boolean vedioVariable, imageVariable,checked;
+    private int colorcodeBackGround, colorCodePagerstripUnderline, colorCodePagerstripText, selectedcoloremptyText;
 
     BaseBuilder(@NonNull FragmentActivity fragmentActivity) {
       this.fragmentActivity = fragmentActivity;
@@ -304,8 +303,6 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
         checked = true;
       }
     }
-
-
 
     public BottomSheetPickerFragment create() {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN

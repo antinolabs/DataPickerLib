@@ -107,14 +107,12 @@ public class ImageFragment extends Fragment {
         if (mParam2.equals("Images")) {
             imagePaths = Utils.getAllImagesPath(this.getActivity());
             Log.e("Size:", String.valueOf(imagePaths.size()));
-            if (imagePaths.size() > 0) {
+            //if (imagePaths.size() > 0) {
                 DataModel dataModel = new DataModel("", Constants.CAMERA_IMAGE);
                 imagePaths.add(0, dataModel);
                 this.imageAdapter = new ImageAdapter(this.getContext(), imagePaths, selectedUrisInterface);
                 recyclerView.setAdapter(imageAdapter);
-            } else if (mParam2.equals("Videos")) {
-                Log.d("Videos", "onViewCreated: " + mParam2);
-            }
+           // }
         } else if (mParam2.equalsIgnoreCase("Videos")) {
             ArrayList<DataModel> videoPaths = Utils.getAllVideosPath(this.getActivity());
             //if (videoPaths.size() > 0) {
