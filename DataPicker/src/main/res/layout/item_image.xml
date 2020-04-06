@@ -6,7 +6,6 @@
     <ImageView
       android:id="@+id/img_item"
       android:layout_width="134dp"
-      android:scaleType="center"
       android:layout_height="134dp"/>
     <ImageView
         android:id="@+id/selected_iv"

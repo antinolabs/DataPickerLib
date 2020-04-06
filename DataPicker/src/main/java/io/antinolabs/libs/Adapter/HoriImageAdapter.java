@@ -1,6 +1,7 @@
 package io.antinolabs.libs.Adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 
@@ -19,10 +21,10 @@ import io.antinolabs.libs.R;
 public class HoriImageAdapter extends RecyclerView.Adapter<HoriImageAdapter.MyViewHolder> {
 
     private Context ctx;
-    private ArrayList<String> paths;
+    private ArrayList<Uri> paths;
     SelectedUrisInterface selectedUrisInterface;
 
-    public HoriImageAdapter(Context ctx, ArrayList<String> paths,SelectedUrisInterface selectedUrisInterface) {
+    public HoriImageAdapter(Context ctx, ArrayList<Uri> paths, SelectedUrisInterface selectedUrisInterface) {
         this.ctx = ctx;
         this.paths = paths;
         this.selectedUrisInterface = selectedUrisInterface;
@@ -38,7 +40,7 @@ public class HoriImageAdapter extends RecyclerView.Adapter<HoriImageAdapter.MyVi
             removeImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    selectedUrisInterface.removeImages(paths.get(getAdapterPosition()));
+                    selectedUrisInterface.removeImages(paths.get(getAdapterPosition()).toString());
                 }
             });
         }
@@ -53,10 +55,11 @@ public class HoriImageAdapter extends RecyclerView.Adapter<HoriImageAdapter.MyVi
 
     @Override
     public void onBindViewHolder(@NonNull HoriImageAdapter.MyViewHolder holder, int position) {
-        Glide.with(ctx).load(paths.get(position)).
+        Glide.with(ctx).load(paths.get(position).getPath()).
                 error(android.R.drawable.alert_dark_frame).
+                apply(new RequestOptions().override(260, 260)).
+                centerCrop().
                 into(holder.imgItem);
-
     }
 
     @Override

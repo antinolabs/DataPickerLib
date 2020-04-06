@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.R;
+import io.antinolabs.libs.Utils.Constants;
 import io.antinolabs.libs.Utils.ModelVideo;
 import io.antinolabs.libs.models.DataModel;
 
@@ -36,22 +37,24 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new MyViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.video_image,parent,false));
+                .inflate(R.layout.video_image, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.imgitemgallery.setTag(position);
-        int PlayStopButtonState = (int) holder.imgitemgallery.getTag();
-        if (PlayStopButtonState == 0) {
-            holder.imgitemgallery.setImageResource(R.drawable.ic_camera_alt_black_24dp);
+        if (paths.get(position).getFileType() == Constants.CAMERA_VIDEO) {
+            holder.imgitemgallery.setBackgroundColor(ctx.getResources().getColor(R.color.semi_transparent));
+            holder.imgitemgallery.setPadding(130,130,130,130);
+            holder.imgitemgallery.setScaleType(ImageView.ScaleType.FIT_XY);
+            Glide.with(ctx).load(R.drawable.ic_videocam_grey_24dp).
+                    into(holder.imgitemgallery);
         } else {
+            holder.videoPlayIv.setVisibility(View.VISIBLE);
             Glide.with(ctx).load(paths.get(position).getPath()).
                     error(android.R.drawable.stat_notify_error).
                     into(holder.imgitemgallery);
-            holder.imgitemgallery.setTag(1);
         }
-
     }
 
     @Override
@@ -60,19 +63,29 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgitemgallery;
-        TextView textView;
-        int pos = 0;
+        ImageView imgitemgallery, selectedItem, videoPlayIv;
+
         public MyViewHolder(@NonNull final View itemView) {
             super(itemView);
             imgitemgallery = itemView.findViewById(R.id.video_view);
-            textView = itemView.findViewById(R.id.text);
+            selectedItem = itemView.findViewById(R.id.selected_iv_video);
+            videoPlayIv = itemView.findViewById(R.id.video_play_iv);
             imgitemgallery.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    selectedUrisInterface.selectedImages(paths.get(pos).getPath());
-                }
-            });
+                    if (paths.get(getAdapterPosition()).getFileType() == Constants.CAMERA_VIDEO) {
+                        selectedUrisInterface.dispatchTakeVideoIntent();
+                    } else {
+                        if (selectedItem.getVisibility() == View.GONE) {
+                            selectedUrisInterface.selectedImages(paths.get(getAdapterPosition()).getPath());
+                            selectedItem.setVisibility(View.VISIBLE);
+                        } else {
+                            selectedUrisInterface.removeImages(paths.get(getAdapterPosition()).getPath());
+                            selectedItem.setVisibility(View.GONE);
+                        }
+                    }
+                    }
+                });
+            }
         }
     }
-}

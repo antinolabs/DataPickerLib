@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,6 +27,7 @@ public class Utils {
    */
   public static ArrayList<DataModel> getAllImagesPath(Activity activity) {
     Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+    Log.d("*1234*",""+uri);
     String bucketName = MediaStore.Images.Media.BUCKET_DISPLAY_NAME;
 
     return prepareGallaryData(activity, uri, bucketName, Constants.IMAGE);
@@ -43,7 +45,6 @@ public class Utils {
     int column_index_data;
     String absolutePathOfImage = null;
     ArrayList<DataModel> paths = new ArrayList<>();
-
     String[] projection = { MediaStore.MediaColumns.DATA,
       bucketName};
 
@@ -54,12 +55,12 @@ public class Utils {
 
     while (cursor.moveToNext()) {
       absolutePathOfImage = cursor.getString(column_index_data);
+      Log.d("*1234*","prepareGalleryData:"+absolutePathOfImage);
       DataModel dataModel = new DataModel(
         absolutePathOfImage,
         type);
       paths.add(dataModel);
     }
-
     return paths;
   }
 
