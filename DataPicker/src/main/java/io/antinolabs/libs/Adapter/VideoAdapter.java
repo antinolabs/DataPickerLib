@@ -47,7 +47,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.MyViewHolder
             holder.imgitemgallery.setBackgroundColor(ctx.getResources().getColor(R.color.semi_transparent));
             holder.imgitemgallery.setPadding(130,130,130,130);
             holder.imgitemgallery.setScaleType(ImageView.ScaleType.FIT_XY);
-            Glide.with(ctx).load(R.drawable.ic_videocam_grey_24dp).into(holder.imgitemgallery);
+            Glide.with(ctx).load(R.drawable.ic_videocam_grey_24dp).
+                    into(holder.imgitemgallery);
         } else {
             holder.videoPlayIv.setVisibility(View.VISIBLE);
             Glide.with(ctx).load(paths.get(position).getPath()).

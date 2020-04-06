@@ -70,11 +70,11 @@ public class ImageFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         recyclerView = view.findViewById(R.id.rc_gallery);
         recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
+        /*recyclerView.hasFixedSize();*/
         recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 int action = e.getAction();
-
                 // Toast.makeText(getActivity(),"HERE",Toast.LENGTH_SHORT).show();
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
@@ -106,16 +106,12 @@ public class ImageFragment extends Fragment {
 
         if (mParam2.equals("Images")) {
             imagePaths = Utils.getAllImagesPath(this.getActivity());
-            Log.e("Size:", String.valueOf(imagePaths.size()));
-            //if (imagePaths.size() > 0) {
                 DataModel dataModel = new DataModel("", Constants.CAMERA_IMAGE);
                 imagePaths.add(0, dataModel);
                 this.imageAdapter = new ImageAdapter(this.getContext(), imagePaths, selectedUrisInterface);
                 recyclerView.setAdapter(imageAdapter);
-           // }
         } else if (mParam2.equalsIgnoreCase("Videos")) {
             ArrayList<DataModel> videoPaths = Utils.getAllVideosPath(this.getActivity());
-            //if (videoPaths.size() > 0) {
             DataModel dataModel = new DataModel("", Constants.CAMERA_VIDEO);
             videoPaths.add(0, dataModel);
             this.videoAdapter = new VideoAdapter(this.getContext(), videoPaths, selectedUrisInterface);

@@ -62,6 +62,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   private PagerTabStrip pagerTabStrip;
   TextView emptyHolderTv;
   HoriImageAdapter horiImageAdapter;
+  Uri singleImageUri;
   ViewPager bottomViewPager;
   ArrayList<Uri> selectedImages = new ArrayList<>();
   private Button doneBtn;
@@ -157,6 +158,12 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   @Override
   public void onClick(View v) {
     if (v.getId() == R.id.btn_done) {
+      try {
+        builder.onImageSelectedListener.onImageSelected(singleImageUri);
+      }
+      catch (Exception ex){
+        builder.onMultiImageSelectedListener.onImagesSelected(selectedImages);
+      }
       dismiss();
     }
   }
@@ -164,7 +171,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   @Override
   public void selectedImages(String uri) {
     selectedImages.add(Uri.parse(uri));
-    builder.onImageSelectedListener.onImageSelected(Uri.parse(uri));
+    this.singleImageUri = Uri.parse(uri);
     emptyHolderTv.setVisibility(View.GONE);
     horiRecyclerView.invalidate();
     horiImageAdapter.notifyDataSetChanged();

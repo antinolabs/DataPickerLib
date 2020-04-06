@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 
@@ -41,13 +42,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     if(paths.get(position).getFileType()  == Constants.IMAGE){
       Glide.with(ctx).load(paths.get(position).getPath()).
               error(android.R.drawable.alert_dark_frame).
+              centerCrop().
               into(holder.imgItem);
     }
     else if(paths.get(position).getFileType() == Constants.CAMERA_IMAGE){
       holder.imgItem.setBackgroundColor(ctx.getResources().getColor(R.color.semi_transparent));
       holder.imgItem.setPadding(130,130,130,130);
-      holder.imgItem.setScaleType(ImageView.ScaleType.FIT_XY);
-      Glide.with(ctx).load(R.drawable.ic_camera_alt_grey_24dp).into(holder.imgItem);
+      Glide.with(ctx).load(R.drawable.ic_camera_alt_grey_24dp).
+              centerCrop().
+              into(holder.imgItem);
     }
   }
 

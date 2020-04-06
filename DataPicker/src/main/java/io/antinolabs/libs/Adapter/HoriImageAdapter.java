@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 
@@ -54,10 +55,11 @@ public class HoriImageAdapter extends RecyclerView.Adapter<HoriImageAdapter.MyVi
 
     @Override
     public void onBindViewHolder(@NonNull HoriImageAdapter.MyViewHolder holder, int position) {
-        Glide.with(ctx).load(paths.get(position)).
+        Glide.with(ctx).load(paths.get(position).getPath()).
                 error(android.R.drawable.alert_dark_frame).
+                apply(new RequestOptions().override(260, 260)).
+                centerCrop().
                 into(holder.imgItem);
-
     }
 
     @Override
