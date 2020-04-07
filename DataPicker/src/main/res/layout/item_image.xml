@@ -6,7 +6,8 @@
   <ImageView
     android:id="@+id/img_item"
     android:layout_width="134dp"
-    android:layout_height="134dp"/>
+    android:layout_height="134dp"
+    android:scaleType="centerCrop"/>
   <ImageView
     android:id="@+id/video_play_iv"
     android:layout_width="134dp"

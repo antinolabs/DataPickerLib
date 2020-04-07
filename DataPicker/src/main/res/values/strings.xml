@@ -2,7 +2,7 @@
 
     <string name="app_name">DataPicker</string>
     <string name="done">Done</string>
-    <string name="bottompicker_title">Select media</string>
+    <string name="bottompicker_title">Select Media</string>
     <string name="no_image">No media selected</string>
 
     <!-- TODO: Remove or change this placeholder text -->

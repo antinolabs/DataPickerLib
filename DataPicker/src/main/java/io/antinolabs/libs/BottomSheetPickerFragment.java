@@ -236,15 +236,14 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
 
   @Override
   public void removeImages(String uri) {
-    if (!(selectedImages.size() > 0))
-        emptyHolderTv.setVisibility(View.VISIBLE);
-
     int pos = selectedImages.indexOf(Uri.parse(uri));
     if(pos > -1)
       if(linearLayoutHorizontalImages.getChildAt(pos).getTag().equals(uri))
         linearLayoutHorizontalImages.removeViewAt(pos);
 
     selectedImages.remove(Uri.parse(uri));
+    if (!(selectedImages.size() > 0))
+      emptyHolderTv.setVisibility(View.VISIBLE);
   }
 
   @Override
