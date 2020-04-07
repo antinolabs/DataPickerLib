@@ -4,10 +4,10 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Build;
@@ -28,25 +28,23 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.PagerTabStrip;
-import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.antinolabs.libs.Adapter.BottomViewPagerAdapter;
 import io.antinolabs.libs.Adapter.HoriImageAdapter;
+import io.antinolabs.libs.Adapter.ImageAdapter;
+import io.antinolabs.libs.Adapter.VideoAdapter;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
+import io.antinolabs.libs.Utils.Constants;
 import io.antinolabs.libs.Utils.Utils;
 import io.antinolabs.libs.models.DataModel;
 
@@ -55,19 +53,17 @@ import static android.app.Activity.RESULT_OK;
 public class BottomSheetPickerFragment extends BottomSheetDialogFragment implements View.OnClickListener, SelectedUrisInterface {
 
   public BaseBuilder builder;
-  private RecyclerView horiRecyclerView;
-  FragmentPagerAdapter fragmentPagerAdapter;
-  TextView bottomsheetTvHeading;
+  private RecyclerView horiRecyclerView, recyclerView;
+  TextView bottomsheetTvHeading, tabImage, tabVideo;
   private View contentView;
-  private PagerTabStrip pagerTabStrip;
   TextView emptyHolderTv;
   HoriImageAdapter horiImageAdapter;
   Uri singleImageUri;
-  ViewPager bottomViewPager;
   ArrayList<Uri> selectedImages = new ArrayList<>();
   private Button doneBtn;
   private static final int REQUEST_IMAGE_CAPTURE = 2;
   static final int REQUEST_VIDEO_CAPTURE = 0;
+  private ArrayList<DataModel> imagePaths, videoPaths;
 
   private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback(){
 
@@ -106,6 +102,16 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
       ((BottomSheetBehavior) behavior).setBottomSheetCallback(mBottomSheetBehaviorCallback);
       ((BottomSheetBehavior) behavior).setPeekHeight(600);
     }
+
+    //getData
+    imagePaths = Utils.getAllImagesPath(this.getActivity());
+    videoPaths = Utils.getAllVideosPath(this.getActivity());
+
+    DataModel dataModelImage = new DataModel("", Constants.CAMERA_IMAGE);
+    imagePaths.add(0, dataModelImage);
+
+    DataModel dataModelVideo = new DataModel("", Constants.CAMERA_VIDEO);
+    videoPaths.add(0, dataModelVideo);
   }
 
   @Nullable
@@ -122,37 +128,39 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   private void initViews(View view) {
 
     emptyHolderTv = view.findViewById(R.id.selected_photos_empty);
-    horiRecyclerView = view.findViewById(R.id.horizontal_recycler);
+    /*horiRecyclerView = view.findViewById(R.id.horizontal_recycler);
     horiRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),5));
     horiImageAdapter = new HoriImageAdapter(getActivity(),selectedImages,this);
-    horiRecyclerView.setAdapter(horiImageAdapter);
+    horiRecyclerView.setAdapter(horiImageAdapter);*/
     doneBtn = view.findViewById(R.id.btn_done);
     doneBtn.setOnClickListener(this);
-    //initialize fragments
-    fragmentPagerAdapter = new BottomViewPagerAdapter(getChildFragmentManager(), this);
-    bottomViewPager = view.findViewById(R.id.bottom_view_pager);
-    bottomViewPager.setAdapter(fragmentPagerAdapter);
+
     //seting TextprogramaticallyHeading
     bottomsheetTvHeading = view.findViewById(R.id.tv_title);
     bottomsheetTvHeading.setText(builder.setTextHeading);
     //setting TextProgramaticallyClosingButton
     doneBtn.setText(builder.setTextClosing);
-    //pagerTabStrip DynamicCodeFunctionality
-    pagerTabStrip = view.findViewById(R.id.pager_header);
-    pagerTabStrip.setBackgroundColor(builder.colorcodeBackGround);
-    pagerTabStrip.setDrawFullUnderline(false);
-    pagerTabStrip.setTextColor(builder.colorCodePagerstripText);
-    pagerTabStrip.setTabIndicatorColor(builder.colorCodePagerstripUnderline);
+
     emptyHolderTv.setText(builder.selectedEmptyText);
     emptyHolderTv.setTextColor(builder.selectedcoloremptyText);
+
+    recyclerView = view.findViewById(R.id.rc_gallery);
+    recyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 3));
+
+    //tabs
+    tabImage = view.findViewById(R.id.tab_image);
+    tabVideo = view.findViewById(R.id.tab_video);
+    tabImage.setOnClickListener(this);
+    tabVideo.setOnClickListener(this);
     //
     if(builder.checked)
     {
-      Log.d("Builder1", "onViewCreated: "+builder.checked);
+      Log.d("Builder1", "onViewCreated: " + builder.checked);
       Toast.makeText(getActivity(), builder.ToastText, Toast.LENGTH_SHORT).show();
       builder.checked=false;
     }
 
+    switchTabs(BaseBuilder.MediaType.IMAGE);
   }
 
   @Override
@@ -166,6 +174,35 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
       }
       dismiss();
     }
+    else if(v.getId() == R.id.tab_image){
+      switchTabs(BaseBuilder.MediaType.IMAGE);
+    }
+    else if(v.getId() == R.id.tab_video){
+      switchTabs(BaseBuilder.MediaType.VIDEO);
+    }
+  }
+
+  private void switchTabs(int type) {
+    if(type == BaseBuilder.MediaType.IMAGE){
+      tabImage.setTypeface(null, Typeface.BOLD);
+      tabVideo.setTypeface(null, Typeface.NORMAL);
+      setImageRecyclerView();
+    }
+    else if(type == BaseBuilder.MediaType.VIDEO){
+      tabVideo.setTypeface(null, Typeface.BOLD);
+      tabImage.setTypeface(null, Typeface.NORMAL);
+      setVideoRecyclerView();
+    }
+  }
+
+  private void setImageRecyclerView() {
+    ImageAdapter imageAdapter = new ImageAdapter(this.getContext(), imagePaths, this);
+    recyclerView.setAdapter(imageAdapter);
+  }
+
+  private void setVideoRecyclerView() {
+    VideoAdapter videoAdapter = new VideoAdapter(this.getContext(), videoPaths, this);
+    recyclerView.setAdapter(videoAdapter);
   }
 
   @Override

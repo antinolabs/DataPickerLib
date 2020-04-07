@@ -105,11 +105,7 @@ public class ImageFragment extends Fragment {
         });
 
         if (mParam2.equals("Images")) {
-            imagePaths = Utils.getAllImagesPath(this.getActivity());
-                DataModel dataModel = new DataModel("", Constants.CAMERA_IMAGE);
-                imagePaths.add(0, dataModel);
-                this.imageAdapter = new ImageAdapter(this.getContext(), imagePaths, selectedUrisInterface);
-                recyclerView.setAdapter(imageAdapter);
+
         } else if (mParam2.equalsIgnoreCase("Videos")) {
             ArrayList<DataModel> videoPaths = Utils.getAllVideosPath(this.getActivity());
             DataModel dataModel = new DataModel("", Constants.CAMERA_VIDEO);
