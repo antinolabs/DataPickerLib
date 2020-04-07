@@ -41,16 +41,37 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
   public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
     if(paths.get(position).getFileType()  == Constants.IMAGE){
       Glide.with(ctx).load(paths.get(position).getPath()).
-              error(android.R.drawable.alert_dark_frame).
-              centerCrop().
-              into(holder.imgItem);
+        error(android.R.drawable.alert_dark_frame).
+        centerCrop().
+        into(holder.imgItem);
+
+      if(paths.get(position).isSelected())
+        holder.selectedItem.setVisibility(View.VISIBLE);
+
     }
     else if(paths.get(position).getFileType() == Constants.CAMERA_IMAGE){
       holder.imgItem.setBackgroundColor(ctx.getResources().getColor(R.color.semi_transparent));
       holder.imgItem.setPadding(130,130,130,130);
       Glide.with(ctx).load(R.drawable.ic_camera_alt_grey_24dp).
-              centerCrop().
-              into(holder.imgItem);
+        centerCrop().
+        into(holder.imgItem);
+    }
+    else if (paths.get(position).getFileType() == Constants.CAMERA_VIDEO) {
+      holder.imgItem.setBackgroundColor(ctx.getResources().getColor(R.color.semi_transparent));
+      holder.imgItem.setPadding(130,130,130,130);
+      holder.imgItem.setScaleType(ImageView.ScaleType.FIT_XY);
+
+      Glide.with(ctx).load(R.drawable.ic_videocam_grey_24dp).
+        into(holder.imgItem);
+
+    } else {
+      holder.videoView.setVisibility(View.VISIBLE);
+      Glide.with(ctx).load(paths.get(position).getPath()).
+        error(android.R.drawable.stat_notify_error).
+        into(holder.imgItem);
+
+      if(paths.get(position).isSelected())
+        holder.selectedItem.setVisibility(View.VISIBLE);
     }
   }
 
@@ -60,24 +81,27 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
   }
 
   public class MyViewHolder extends RecyclerView.ViewHolder {
-    ImageView imgItem, selectedItem;
+    ImageView imgItem, selectedItem, videoView;
     public MyViewHolder(@NonNull final View itemView) {
       super(itemView);
       imgItem = itemView.findViewById(R.id.img_item);
       selectedItem = itemView.findViewById(R.id.selected_iv);
+      videoView = itemView.findViewById(R.id.video_play_iv);
       imgItem.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
           if (paths.get(getAdapterPosition()).getFileType() == Constants.CAMERA_IMAGE) {
-              selectedUrisInterface.dispatchTakePictureIntent();
+            selectedUrisInterface.dispatchTakePictureIntent();
           }
           else {
             if (selectedItem.getVisibility() == View.GONE) {
               selectedUrisInterface.selectedImages(paths.get(getAdapterPosition()).getPath());
               selectedItem.setVisibility(View.VISIBLE);
+              paths.get(getAdapterPosition()).setSelected(true);
             } else {
               selectedUrisInterface.removeImages(paths.get(getAdapterPosition()).getPath());
               selectedItem.setVisibility(View.GONE);
+              paths.get(getAdapterPosition()).setSelected(false);
             }
           }
         }

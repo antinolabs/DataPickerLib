@@ -17,6 +17,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +35,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -40,9 +44,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.antinolabs.libs.Adapter.HoriImageAdapter;
 import io.antinolabs.libs.Adapter.ImageAdapter;
-import io.antinolabs.libs.Adapter.VideoAdapter;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.Utils.Constants;
 import io.antinolabs.libs.Utils.Utils;
@@ -52,17 +54,21 @@ import static android.app.Activity.RESULT_OK;
 
 public class BottomSheetPickerFragment extends BottomSheetDialogFragment implements View.OnClickListener, SelectedUrisInterface {
 
-  public BaseBuilder builder;
-  private RecyclerView horiRecyclerView, recyclerView;
-  TextView bottomsheetTvHeading, tabImage, tabVideo;
+  private BaseBuilder builder;
+  private RecyclerView recyclerView;
+  private TextView bottomsheetTvHeading, tabImage, tabVideo;
   private View contentView;
-  TextView emptyHolderTv;
-  HoriImageAdapter horiImageAdapter;
-  Uri singleImageUri;
-  ArrayList<Uri> selectedImages = new ArrayList<>();
+  private TextView emptyHolderTv;
+  private Uri singleImageUri;
+  private ArrayList<Uri> selectedImages = new ArrayList<>();
+  private HorizontalScrollView scHorizontalView;
   private Button doneBtn;
+  private ImageAdapter imageAdapter, videoAdapter;
+  private ViewGroup.MarginLayoutParams layoutParams;
+  private LinearLayout linearLayoutHorizontalImages;
   private static final int REQUEST_IMAGE_CAPTURE = 2;
-  static final int REQUEST_VIDEO_CAPTURE = 0;
+  private static final int REQUEST_VIDEO_CAPTURE = 0;
+
   private ArrayList<DataModel> imagePaths, videoPaths;
 
   private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback(){
@@ -128,10 +134,6 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   private void initViews(View view) {
 
     emptyHolderTv = view.findViewById(R.id.selected_photos_empty);
-    /*horiRecyclerView = view.findViewById(R.id.horizontal_recycler);
-    horiRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),5));
-    horiImageAdapter = new HoriImageAdapter(getActivity(),selectedImages,this);
-    horiRecyclerView.setAdapter(horiImageAdapter);*/
     doneBtn = view.findViewById(R.id.btn_done);
     doneBtn.setOnClickListener(this);
 
@@ -153,6 +155,13 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     tabImage.setOnClickListener(this);
     tabVideo.setOnClickListener(this);
     //
+
+    //add scrollview
+    scHorizontalView = view.findViewById(R.id.sv_horizontal);
+    linearLayoutHorizontalImages = view.findViewById(R.id.linear_horizontal_images);
+    layoutParams = new ViewGroup.MarginLayoutParams(130, 130);
+    layoutParams.setMargins(2,2,2,2);
+
     if(builder.checked)
     {
       Log.d("Builder1", "onViewCreated: " + builder.checked);
@@ -196,13 +205,15 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   }
 
   private void setImageRecyclerView() {
-    ImageAdapter imageAdapter = new ImageAdapter(this.getContext(), imagePaths, this);
-    recyclerView.setAdapter(imageAdapter);
+    if(imageAdapter == null)
+      imageAdapter = new ImageAdapter(this.getContext(), imagePaths, this);
+      recyclerView.setAdapter(imageAdapter);
   }
 
   private void setVideoRecyclerView() {
-    VideoAdapter videoAdapter = new VideoAdapter(this.getContext(), videoPaths, this);
-    recyclerView.setAdapter(videoAdapter);
+    if(videoAdapter == null)
+      videoAdapter = new ImageAdapter(this.getContext(), videoPaths, this);
+      recyclerView.setAdapter(videoAdapter);
   }
 
   @Override
@@ -210,17 +221,30 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     selectedImages.add(Uri.parse(uri));
     this.singleImageUri = Uri.parse(uri);
     emptyHolderTv.setVisibility(View.GONE);
-    /*horiRecyclerView.invalidate();
-    horiImageAdapter.notifyDataSetChanged();*/
+
+    ImageView imageView = new ImageView(getContext());
+    imageView.setLayoutParams(layoutParams);
+    imageView.setTag(uri);
+
+    Glide.with(getContext()).load(uri).
+      error(android.R.drawable.alert_dark_frame).
+      centerCrop().
+      into(imageView);
+
+    linearLayoutHorizontalImages.addView(imageView);
   }
 
   @Override
   public void removeImages(String uri) {
+    if (!(selectedImages.size() > 0))
+        emptyHolderTv.setVisibility(View.VISIBLE);
+
+    int pos = selectedImages.indexOf(Uri.parse(uri));
+    if(pos > -1)
+      if(linearLayoutHorizontalImages.getChildAt(pos).getTag().equals(uri))
+        linearLayoutHorizontalImages.removeViewAt(pos);
+
     selectedImages.remove(Uri.parse(uri));
-    if (!(selectedImages.size() >0))
-      emptyHolderTv.setVisibility(View.VISIBLE);
-    /*horiRecyclerView.invalidate();
-    horiImageAdapter.notifyDataSetChanged();*/
   }
 
   @Override
@@ -248,7 +272,6 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
         if (imageBitmap != null) {
           Uri uri = Utils.getImageUri(getContext(), imageBitmap);
           selectedImages(uri.toString());
-          horiImageAdapter.notifyDataSetChanged();
         }
       }
       catch (NullPointerException e){
