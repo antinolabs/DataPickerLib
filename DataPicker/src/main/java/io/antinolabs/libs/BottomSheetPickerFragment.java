@@ -210,8 +210,8 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     selectedImages.add(Uri.parse(uri));
     this.singleImageUri = Uri.parse(uri);
     emptyHolderTv.setVisibility(View.GONE);
-    horiRecyclerView.invalidate();
-    horiImageAdapter.notifyDataSetChanged();
+    /*horiRecyclerView.invalidate();
+    horiImageAdapter.notifyDataSetChanged();*/
   }
 
   @Override
@@ -219,8 +219,8 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     selectedImages.remove(Uri.parse(uri));
     if (!(selectedImages.size() >0))
       emptyHolderTv.setVisibility(View.VISIBLE);
-    horiRecyclerView.invalidate();
-    horiImageAdapter.notifyDataSetChanged();
+    /*horiRecyclerView.invalidate();
+    horiImageAdapter.notifyDataSetChanged();*/
   }
 
   @Override
