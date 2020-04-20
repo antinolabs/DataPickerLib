@@ -14,14 +14,9 @@ public class DataPicker extends BottomSheetPickerFragment {
       super(fragmentActivity);
     }
 
-    public void show(OnImageSelectedListener onImageSelectedListener) {
-      this.onImageSelectedListener = onImageSelectedListener;
-      create().show(fragmentActivity.getSupportFragmentManager());
-    }
-
     public void show(OnMultiImageSelectedListener onMultiImageSelectedListener) {
       this.onMultiImageSelectedListener = onMultiImageSelectedListener;
-      create().show(fragmentActivity.getSupportFragmentManager());
+      create().show(fragmentActivity.getSupportFragmentManager(), false);
     }
   }
 }

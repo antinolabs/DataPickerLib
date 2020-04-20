@@ -54,7 +54,8 @@ import static android.app.Activity.RESULT_OK;
 
 public class BottomSheetPickerFragment extends BottomSheetDialogFragment implements View.OnClickListener, SelectedUrisInterface {
 
-  private BaseBuilder builder;
+  public static BaseBuilder builder;
+  public static Boolean isSingle = false;
   private RecyclerView recyclerView;
   private TextView bottomsheetTvHeading, tabImage, tabVideo;
   private View contentView;
@@ -84,7 +85,9 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     }
   };
 
-  public void show(FragmentManager fragmentManager) {
+  public void show(FragmentManager fragmentManager, boolean isSingle) {
+    isSingle = isSingle;
+
     FragmentTransaction ft = fragmentManager.beginTransaction();
     ft.add(this, getTag());
     ft.commitAllowingStateLoss();
@@ -247,6 +250,11 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   }
 
   @Override
+  public int selectedImagesCount() {
+    return selectedImages.size();
+  }
+
+  @Override
   public void dispatchTakePictureIntent() {
     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
@@ -293,9 +301,9 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
   public abstract static class BaseBuilder<T extends BaseBuilder> {
 
     FragmentActivity fragmentActivity;
-    int selectMaxCount;
-    OnImageSelectedListener onImageSelectedListener;
-    OnMultiImageSelectedListener onMultiImageSelectedListener;
+    public int selectMaxCount;
+    public OnImageSelectedListener onImageSelectedListener;
+    public OnMultiImageSelectedListener onMultiImageSelectedListener;
     private String setTextHeading, setTextClosing, selectedEmptyText, ToastText;
     boolean vedioVariable, imageVariable,checked;
     private int colorcodeBackGround, colorCodePagerstripUnderline, colorCodePagerstripText, selectedcoloremptyText;
@@ -316,11 +324,6 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
 
     public T setTextNameBottomSheetHeadingClose(String textNameCloseHeading) {
       this.setTextClosing = textNameCloseHeading;
-      return (T) this;
-    }
-
-    public T setOnImageSelectedListener(OnImageSelectedListener onImageSelectedListener) {
-      this.onImageSelectedListener = onImageSelectedListener;
       return (T) this;
     }
 

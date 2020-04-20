@@ -1,14 +1,15 @@
 package io.antinolabs.libs.Interfaces;
 
-import android.net.Uri;
-
 public interface SelectedUrisInterface {
 
-    public void selectedImages(String uri);
+    void selectedImages(String uri);
 
-    public void removeImages(String uri);
+    void removeImages(String uri);
 
-    public void dispatchTakePictureIntent();
+    void dispatchTakePictureIntent();
 
-    public void dispatchTakeVideoIntent();
+    void dispatchTakeVideoIntent();
+
+    int selectedImagesCount();
+
 }

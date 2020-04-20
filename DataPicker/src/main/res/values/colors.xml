@@ -2,6 +2,7 @@
 <resources>
   <color name="picker_selected">#D3D3D3</color>
   <color name="semi_transparent">#99000000</color>
+  <color name="accent">#3F51B5</color>
   <color name="black">#000000</color>
   <color name="grey">#7E7D7D</color>
 </resources>

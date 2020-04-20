@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -99,5 +100,9 @@ public class Utils {
       return BitmapFactory.decodeFile(imgFile.getAbsolutePath());
     }
     return null;
+  }
+
+  public static void showToast(Context context, String msg){
+    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
   }
 }

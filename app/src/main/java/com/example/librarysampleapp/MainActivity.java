@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             }
             DataPicker
                     .with(MainActivity.this)
-                    .setSelectMaxCount(4)
+                    .setSelectMaxCount(2)
                     .setTextNameBottomSheetHeading("Select Media")
                     .setTextNameBottomSheetHeadingClose("Done")
                     .setPagerTabTextColor(getResources().getColor(android.R.color.black))
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
                     .selectedColorEmptyText(Color.rgb(240, 120, 120))
                     .selectedImagesEnable(true)
                     .selectedVideosEnable(true)
+
                     .show(new BottomSheetPickerFragment.OnMultiImageSelectedListener() {
                         @Override
                         public void onImagesSelected(final List<Uri> uriList) {
@@ -60,13 +61,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     });
-                    /*.show(new BottomSheetPickerFragment.OnImageSelectedListener() {
-                        @Override
-                        public void onImageSelected(Uri uri) {
-                            mainImage.setVisibility(View.VISIBLE);
-                            mainImage.setImageURI(uri);
-                        }
-                    });*/
 
         }
     });

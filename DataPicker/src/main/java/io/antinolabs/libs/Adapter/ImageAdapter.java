@@ -1,6 +1,7 @@
 package io.antinolabs.libs.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,20 +15,26 @@ import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 
+import io.antinolabs.libs.BottomSheetPickerFragment;
 import io.antinolabs.libs.Interfaces.SelectedUrisInterface;
 import io.antinolabs.libs.R;
 import io.antinolabs.libs.Utils.Constants;
+import io.antinolabs.libs.Utils.Utils;
 import io.antinolabs.libs.models.DataModel;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
+  private final int maxCount;
   private Context ctx;
   private ArrayList<DataModel> paths;
-  SelectedUrisInterface selectedUrisInterface;
+  private SelectedUrisInterface selectedUrisInterface;
+  private int posSingle = -1;
 
   public ImageAdapter(Context ctx, ArrayList<DataModel> paths, SelectedUrisInterface selectedUrisInterface) {
     this.ctx = ctx;
     this.paths = paths;
     this.selectedUrisInterface = selectedUrisInterface;
+
+    maxCount = BottomSheetPickerFragment.builder.selectMaxCount;
   }
 
   @NonNull
@@ -47,6 +54,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
 
       if(paths.get(position).isSelected())
         holder.selectedItem.setVisibility(View.VISIBLE);
+      else
+        holder.selectedItem.setVisibility(View.GONE);
 
     }
     else if(paths.get(position).getFileType() == Constants.CAMERA_IMAGE){
@@ -72,6 +81,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
 
       if(paths.get(position).isSelected())
         holder.selectedItem.setVisibility(View.VISIBLE);
+      else
+        holder.selectedItem.setVisibility(View.GONE);
     }
   }
 
@@ -91,21 +102,71 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
         @Override
         public void onClick(View v) {
           if (paths.get(getAdapterPosition()).getFileType() == Constants.CAMERA_IMAGE) {
-            selectedUrisInterface.dispatchTakePictureIntent();
+            if(isAllowedToSelectMoreImages(selectedUrisInterface))
+              selectedUrisInterface.dispatchTakePictureIntent();
+            else
+              Utils.showToast(ctx, "You can only select " + maxCount + " images");
           }
           else {
-            if (selectedItem.getVisibility() == View.GONE) {
-              selectedUrisInterface.selectedImages(paths.get(getAdapterPosition()).getPath());
-              selectedItem.setVisibility(View.VISIBLE);
-              paths.get(getAdapterPosition()).setSelected(true);
-            } else {
-              selectedUrisInterface.removeImages(paths.get(getAdapterPosition()).getPath());
-              selectedItem.setVisibility(View.GONE);
-              paths.get(getAdapterPosition()).setSelected(false);
+            if (!paths.get(getAdapterPosition()).isSelected()) {
+                if(isAllowedToSelectMoreImages(selectedUrisInterface))
+                  select(View.GONE, getAdapterPosition());
+                else
+                  Utils.showToast(ctx, "You can only select " + maxCount + " images");
+
             }
+            else
+              select(View.VISIBLE, getAdapterPosition());
           }
         }
       });
+    }
+
+    private void select(int visibility, int pos){
+      if(maxCount != 1){
+        changeView(visibility, pos);
+      }
+      else{
+        if(posSingle > -1){
+          if(getAdapterPosition() != posSingle){
+            changeView(View.VISIBLE, posSingle);
+            changeView(View.GONE, getAdapterPosition());
+          }else{
+            if(paths.get(getAdapterPosition()).isSelected()){
+              changeView(View.VISIBLE, posSingle);
+            }else{
+              changeView(View.GONE, getAdapterPosition());
+            }
+          }
+          if(posSingle == getAdapterPosition())
+            posSingle = -1;
+          else
+            posSingle = getAdapterPosition();
+        }
+        else{
+          changeView(View.GONE, getAdapterPosition());
+          posSingle = getAdapterPosition();
+        }
+      }
+    }
+
+    private void changeView(int visibility, int pos){
+      if(visibility == View.GONE) {
+        Log.d("Visibility: ", "GONE");
+        selectedUrisInterface.selectedImages(paths.get(pos).getPath());
+        paths.get(getAdapterPosition()).setSelected(true);
+      }else {
+        Log.d("Visibility: ", "VISIBLE");
+        selectedUrisInterface.removeImages(paths.get(pos).getPath());
+        paths.get(getAdapterPosition()).setSelected(false);
+      }
+
+      notifyItemChanged(getAdapterPosition());
+    }
+
+
+    private boolean isAllowedToSelectMoreImages(SelectedUrisInterface selectedUrisInterface){
+      return selectedUrisInterface.selectedImagesCount() < maxCount;
     }
   }
 }
