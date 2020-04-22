@@ -39,6 +39,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -229,7 +230,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     imageView.setLayoutParams(layoutParams);
     imageView.setTag(uri);
 
-    Glide.with(getContext()).load(uri).
+    Glide.with(getContext()).load(new File(uri)).
       error(android.R.drawable.alert_dark_frame).
       centerCrop().
       into(imageView);
@@ -278,7 +279,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
         Bitmap imageBitmap = (Bitmap) extras.get("data");
         if (imageBitmap != null) {
           Uri uri = Utils.getImageUri(getContext(), imageBitmap);
-          selectedImages(uri.toString());
+          selectedImages(Utils.getRealPathFromURI(getContext(), uri));
         }
       }
       catch (NullPointerException e){
@@ -286,7 +287,7 @@ public class BottomSheetPickerFragment extends BottomSheetDialogFragment impleme
     }
     if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
       Uri videoUri = data.getData();
-      selectedImages(videoUri.toString());
+      selectedImages(Utils.getRealPathFromURI(getContext(), videoUri));
     }
   }
 

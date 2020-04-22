@@ -1,6 +1,8 @@
 package io.antinolabs.libs.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import io.antinolabs.libs.BottomSheetPickerFragment;
@@ -47,9 +50,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
   @Override
   public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
     if(paths.get(position).getFileType()  == Constants.IMAGE){
-      Glide.with(ctx).load(paths.get(position).getPath()).
+      Glide.with(ctx).load(new File(paths.get(position).getPath())).
         error(android.R.drawable.alert_dark_frame).
         centerCrop().
+        dontAnimate().
         into(holder.imgItem);
 
       if(paths.get(position).isSelected())
@@ -59,19 +63,17 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
 
     }
     else if(paths.get(position).getFileType() == Constants.CAMERA_IMAGE){
-      holder.imgItem.setBackgroundColor(ctx.getResources().getColor(R.color.semi_transparent));
-      holder.imgItem.setPadding(130,130,130,130);
-      Glide.with(ctx).load(R.drawable.ic_camera_alt_grey_24dp).
-        centerCrop().
-        into(holder.imgItem);
+      holder.imgItem.setBackgroundColor(ctx.getResources().getColor(R.color.accent));
+      holder.imgItem.setPadding(85,85,85,85);
+      holder.imgItem.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_camera_alt_grey_24dp));
     }
     else if (paths.get(position).getFileType() == Constants.CAMERA_VIDEO) {
-      holder.imgItem.setBackgroundColor(ctx.getResources().getColor(R.color.semi_transparent));
+      holder.imgItem.setBackgroundColor(ctx.getResources().getColor(R.color.accent));
       holder.imgItem.setPadding(130,130,130,130);
       holder.imgItem.setScaleType(ImageView.ScaleType.FIT_XY);
 
-      Glide.with(ctx).load(R.drawable.ic_videocam_grey_24dp).
-        into(holder.imgItem);
+      holder.imgItem.setPadding(85,85,85,85);
+      holder.imgItem.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_videocam_grey_24dp));
 
     } else {
       holder.videoView.setVisibility(View.VISIBLE);
@@ -105,14 +107,20 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
             if(isAllowedToSelectMoreImages(selectedUrisInterface))
               selectedUrisInterface.dispatchTakePictureIntent();
             else
-              Utils.showToast(ctx, "You can only select " + maxCount + " images");
+              Utils.showToast(ctx, "You can only select " + maxCount + " images/videos");
+          }
+          else if(paths.get(getAdapterPosition()).getFileType() == Constants.CAMERA_VIDEO){
+            if(isAllowedToSelectMoreImages(selectedUrisInterface))
+              selectedUrisInterface.dispatchTakeVideoIntent();
+            else
+              Utils.showToast(ctx, "You can only select " + maxCount + " images/videos");
           }
           else {
             if (!paths.get(getAdapterPosition()).isSelected()) {
                 if(isAllowedToSelectMoreImages(selectedUrisInterface))
                   select(View.GONE, getAdapterPosition());
                 else
-                  Utils.showToast(ctx, "You can only select " + maxCount + " images");
+                  Utils.showToast(ctx, "You can only select " + maxCount + " images/videos");
 
             }
             else

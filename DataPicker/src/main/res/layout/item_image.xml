@@ -25,7 +25,6 @@
     android:layout_centerVertical="true"
     android:layout_centerHorizontal="true"
     android:padding="40dp"
-    android:tint="@android:color/white"
-    android:background="@color/accent"
+    android:background="@color/semi_transparent"
     android:src="@drawable/ic_check_black_50dp"/>
 </RelativeLayout>
