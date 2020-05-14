@@ -1,6 +1,12 @@
 <resources>
-  <string name="app_name">DataPicker</string>
-  <string name="done">Done</string>
-  <string name="tedbottompicker_title">Choose Image</string>
-  <string name="no_image">No Images Selected</string>
+
+    <string name="app_name">DataPicker</string>
+    <string name="done">Done</string>
+    <string name="bottompicker_title">Select Media</string>
+    <string name="no_image">No media selected</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="image">Image</string>
+  <string name="video">Video</string>
 </resources>
