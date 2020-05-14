@@ -6,14 +6,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import io.antinolabs.libs.models.DataModel;
 
@@ -27,11 +26,15 @@ public class Utils {
    * @return ArrayList with images Path
    */
   public static ArrayList<DataModel> getAllImagesPath(Activity activity) {
-    Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-    Log.d("*1234*",""+uri);
+    ArrayList<DataModel> images;
+
+    Uri externalUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
     String bucketName = MediaStore.Images.Media.BUCKET_DISPLAY_NAME;
 
-    return prepareGallaryData(activity, uri, bucketName, Constants.IMAGE);
+    images = prepareGallaryData(activity, externalUri, bucketName, Constants.IMAGE);
+    Collections.reverse(images);
+
+    return images;
   }
 
   public static ArrayList<DataModel> getAllVideosPath(Activity activity){
@@ -49,14 +52,15 @@ public class Utils {
     String[] projection = { MediaStore.MediaColumns.DATA,
       bucketName};
 
-    cursor = activity.getContentResolver().query(uri, projection, null,
-      null, null);
+    final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
+
+    cursor = activity.getContentResolver().query(uri, projection, null
+      ,null,orderBy + " ASC");
 
     column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
     while (cursor.moveToNext()) {
       absolutePathOfImage = cursor.getString(column_index_data);
-      Log.d("*1234*","prepareGalleryData:"+absolutePathOfImage);
       DataModel dataModel = new DataModel(
         absolutePathOfImage,
         type);
