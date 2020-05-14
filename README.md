@@ -1,6 +1,8 @@
 Made by [Antino Labs](https://www.antino.io/) with ❤️
 # DataPicker Library 
 
+<img src="https://github.com/antinolabs/DataPickerLib/blob/master/device-2020-05-14-174516.png?raw=true" width="200" alt="accessibility text">
+
 An Android Library written in Java, to pick Images/Videos with a single implementation. 
 
 
