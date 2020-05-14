@@ -10,13 +10,25 @@ An Android Library written in Java, to pick Images/Videos with a single implemen
 ## Installation
 
 ### gradle
+
+Add it in your root build.gradle at the end of repositories:
+
+```bash
+allprojects {
+  repositories {
+	...
+	maven { url 'https://jitpack.io' }
+  }
+}
+```
+
 Add dependency in your build.gradle.
 
 ```bash
-implementation 'io.antinolabs.libs:1.0.0'
+implementation 'com.github.antinolabs:DataPickerLib:1.0.0'
 ```
 
-### Permissions
+## Permissions
 Add permissions in your manifest.xml. Request permission from your app if you are using SDK Level 26+.
 
 ```bash
@@ -48,8 +60,6 @@ DataPicker
         }
       });
 ```
-
-## Attributes
 
 
 ## Contributing
