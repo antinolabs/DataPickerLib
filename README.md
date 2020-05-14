@@ -16,6 +16,15 @@ Add dependency in your build.gradle.
 implementation 'io.antinolabs.libs:1.0.0'
 ```
 
+### Permissions
+Add permissions in your manifest.xml. Request permission from your app if you are using SDK Level 26+.
+
+```bash
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
+```
+
 ## Usage
 
 ```java
